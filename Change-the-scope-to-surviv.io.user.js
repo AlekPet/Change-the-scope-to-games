@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name  Change the scope to surviv.io
-// @name:ru_RU  Изменить прицел в surviv.io
+// @name:ru  Изменить прицел в surviv.io
 // @namespace    https://github.com/AlekPet/
 // @version      0.0.1
 // @description  Сhange the scope in the game surviv.io
-// @description:ru_RU  Изменяет прицел в игре surviv.io
+// @description:ru  Изменяет прицел в игре surviv.io
 // @copyright    2018, AlekPet (https://github.com/AlekPet)
 // @author       AlekPet
 // @license      MIT; https://opensource.org/licenses/MIT
