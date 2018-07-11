@@ -4,4 +4,5 @@
 
 >User script that allows you to change the sight in the game.<br>
 >The script also allows you to add your own sights.<br>
-<b>Author:</b> AlekPet <br>
+
+<b>Author:</b> AlekPet
