@@ -389,7 +389,7 @@ z-index: 6;
 
     language = window.navigator.userLanguage || window.navigator.language
 
-    if(language == "ru-RU") selLang = lang.ru
+    if(language.includes("ru")) selLang = lang.ru
     if(debug) console.log("Язык:", language, selLang)
 
     function loadStorage(){
