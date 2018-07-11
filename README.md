@@ -1,2 +1,7 @@
-# Change-the-scope-to-surviv.io
-Сhange the scope in the game surviv.io | Изменяет прицел в игре surviv.io
+# Change the scope to surviv.io / Изменить прицел в surviv.io
+>Пользовательский скрипт, позволяющий изменить прицел в игре<br>
+>Скрипт также позволяет добавлять свои прицелы.
+
+>User script that allows you to change the sight in the game.<br>
+>The script also allows you to add your own sights.
+<b>Author:</b> AlekPet <br>
