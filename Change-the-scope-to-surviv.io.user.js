@@ -3,7 +3,7 @@
 // @name:ru_RU  Изменить прицел в surviv.io
 // @namespace    https://github.com/AlekPet/
 // @version      0.0.1
-// @description:en_US  Сhange the scope in the game surviv.io
+// @description  Сhange the scope in the game surviv.io
 // @description:ru_RU  Изменяет прицел в игре surviv.io
 // @copyright    2018, AlekPet (https://github.com/AlekPet)
 // @author       AlekPet
