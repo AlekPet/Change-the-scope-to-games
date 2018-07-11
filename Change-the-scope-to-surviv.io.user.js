@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name:en_US  Change the scope to surviv.io
+// @name  Change the scope to surviv.io
 // @name:ru_RU  Изменить прицел в surviv.io
 // @namespace    https://github.com/AlekPet/
 // @version      0.0.1
