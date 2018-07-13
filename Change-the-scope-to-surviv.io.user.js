@@ -2,7 +2,7 @@
 // @name  Change the scope to surviv.io
 // @name:ru  Изменить прицел в surviv.io
 // @namespace    https://github.com/AlekPet/
-// @version      0.0.1
+// @version      0.0.2
 // @description  Сhange the scope in the game surviv.io
 // @description:ru  Изменяет прицел в игре surviv.io
 // @copyright    2018, AlekPet (https://github.com/AlekPet)
@@ -11,8 +11,8 @@
 // @match        http://surviv.io/
 // @match        http://zombsroyale.io/
 // @icon         http://surviv.io/img/icon_app.png
-// @updateURL    https://github.com/AlekPet/Change-the-scope-to-surviv.io/raw/master/Change-the-scope-to-surviv.io.user.js
-// @downloadURL  https://github.com/AlekPet/Change-the-scope-to-surviv.io/raw/master/Change-the-scope-to-surviv.io.user.js
+// @updateURL    https://raw.githubusercontent.com/AlekPet/Change-the-scope-to-surviv.io/master/Change-the-scope-to-surviv.io.user.js
+// @downloadURL  https://raw.githubusercontent.com/AlekPet/Change-the-scope-to-surviv.io/master/Change-the-scope-to-surviv.io.user.js
 // @run-at document-end
 // @grant GM_setValue
 // @grant GM_getValue
