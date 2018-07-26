@@ -2,7 +2,7 @@
 // @name  Change the scope to surviv.io
 // @name:ru  Изменить прицел в surviv.io
 // @namespace    https://github.com/AlekPet/
-// @version      0.0.2
+// @version      0.0.3
 // @description  Сhange the scope in the game surviv.io
 // @description:ru  Изменяет прицел в игре surviv.io
 // @copyright    2018, AlekPet (https://github.com/AlekPet)
@@ -297,6 +297,15 @@ img#image_aim {
 position: absolute;
 z-index: 6;
 }
+.font_8{
+font-size: 0.8em;
+}
+.font_7{
+font-size: 0.7em;
+}
+.font_6{
+font-size: 0.6em;
+}
 `);
 
 (function() {
@@ -312,7 +321,10 @@ z-index: 6;
                   form_title: "Выбор прицела",
                   addCrosshair: "Добавить прицел",
                   editCrosshair: "Правка",
-                  delCrosshair: "Удалить прицел(ы)",
+                  editComplete: "Прицел был отредактирован!",
+                  editEditApply: "Применить изменения",
+                  delCrosshair: "Удалить прицел(ы)?",
+                  delComplete: "Прицел(ы) были удалены!",
                   selectCrosshair: "Выбрать: ",
                   scopeName: "Название прицела (необяз.)",
                   scopeLink: "Ссылка прицела (png,gif,jpg,cur,base64)",
@@ -330,24 +342,31 @@ z-index: 6;
                   scopeSite: "Еще прицелы",
                   createScope: "Создать прицел",
                   alertMesImage: ["Внимание:\nРазмер изображения ","Максимально допустимый размер изображения 128x128px!\nИначе работать не будет!\nПроверить прицел можно, если навести на рисунок..."],
-                  deleteScope: "Удалить курсор(ы)?",
                   selectScope: "Выбрать прицел",
                   form_close: "Закрыть",
                   resetDefault: "Загрузить стандартные",
                   resetDefaultCompete: "Стандартные прицелы были загружены!",
                   resetQuestion: "Вы действительно хотите загрузить стандартные прицелы?\nВсе ваши добавленные прицелы, буду удалены?",
                   resetQuestionFisrt: "Загрузить стандартный набор прицелов?",
-                  laserColor: "Цвет луча:",
-                  laserWidth: "Толщина луча:",
-                  laserParmDotted: "Параметры пунктира:",
+                  laserColor: "Цвет луча:\nПо умолчанию: red",
+                  laserWidth: "Толщина луча:\nПо умолчанию: 2",
+                  laserParmDotted: "Параметры пунктира:\nПо умолчанию: 5,15",
                   laserDottedOn: "Включить пунктир?",
-                  rightOptionsTitle: "Опции"
+                  rightOptionsTitle: "Опции",
+                  selectAll: "Выбрать все",
+                  deselectAll: "Убрать выделение",
+                  buttonInGame: "Кнопка в игре",
+                  buttonInGameInfo: "Показывать кнопку \"Выбрать прицел\" в игре",
+                  laserSaveSetting:"Сохранить настройки лазера?"
               },
               en:{
                   form_title: "Select scope",
                   addCrosshair: "Add scope",
                   editCrosshair: "Edit",
-                  delCrosshair: "Remove scope(s)",
+                  editComplete: "The scope was edited!",
+                  editEditApply: "Apply changes",
+                  delCrosshair: "Remove scope(s)?",
+                  delComplete: "The scope(s) have been removed!",
                   selectCrosshair: "Select: ",
                   scopeName: "Name for the sight (opt.)",
                   scopeLink: "Sight link (png,gif,jpg,cur,base64)",
@@ -365,18 +384,22 @@ z-index: 6;
                   scopeSite: "More sights",
                   createScope: "Create sight",
                   alertMesImage: ["Attention:\nImage Size", "The maximum image size is 128x128px!\nOtherwise it will not work!\nIt is possible to check the sight if you look at the picture ..."],
-                  deleteScope: "Delete the cursor(s)?",
                   selectScope: "Select scope",
                   form_close: "Close",
                   resetDefault: "Load default",
                   resetDefaultCompete: "Standard scopes have been loaded!",
                   resetQuestion: "Do you really want to load standard scopes?\nAll your added scopes will be deleted?",
                   resetQuestionFisrt: "Download the standard set of sights?",
-                  laserColor: "Beam color:",
-                  laserWidth: "Beam width:",
-                  laserParmDotted: "Dashed Parameters:",
+                  laserColor: "Beam color:\nDefault: red",
+                  laserWidth: "Beam width:\nDefault: 2",
+                  laserParmDotted: "Dashed Parameters:\nDefault: 5,15",
                   laserDottedOn: "Enable dotted line?",
-                  rightOptionsTitle: "Options"
+                  rightOptionsTitle: "Options",
+                  selectAll: "Select All",
+                  deselectAll: "Deselect All",
+                  buttonInGame: "Button in the game",
+                  buttonInGameInfo: "Show the \"Select Sight\" button in the game",
+                  laserSaveSetting: "Save laser settings?"
               }
           },
 
@@ -397,11 +420,21 @@ z-index: 6;
 
         ObjSaveCursors = (ObjSaveCursors_tmp) ? JSON.parse(GM_getValue('ObjSaveCursors')) : {
             options: {
-                firstRun: true
+                firstRun: true,
+                buttonShow: true,
+                laserSetting:{enabled:false, color:"red", width: 2, dotted: {enabled: false, lines:"5,15"}}
             },
             cursorList:{},
             currentActive:null
         };
+        // Доп. поля опций, если нет
+        if(ObjSaveCursors.hasOwnProperty("options")){
+            if(!ObjSaveCursors.options.hasOwnProperty("buttonShow")) ObjSaveCursors.options.buttonShow = true
+            if(!ObjSaveCursors.options.hasOwnProperty("laserSetting")){
+                ObjSaveCursors.options.laserSetting = {enabled:false, color:"red", width: 2, dotted: {enabled: false, lines:"5,15"}}
+            }
+        }
+
         if(debug) console.log(ObjSaveCursors)
         return (ObjSaveCursors.hasOwnProperty("options") && ObjSaveCursors.options.firstRun)?true:false
     }
@@ -502,32 +535,60 @@ z-index: 6;
         }
     }
 
-    function betaLine(color = "red", widthLine = 2, dotted = null){
+    function makeCnavas(){
         let $canvas = $("#linebetas"),
-            $cvs = $("#cvs")
-        if($canvas.length == 0){
-            $canvas = $('<canvas>').css({position: 'absolute',
-                                         top: 0,
-                                         left: 0}).attr({'id' :'linebetas', width: 1920, height: 531})
+            $cvs = $("#cvs"),
+            ctx
+        if($("#linebetas").length == 0){
+            $canvas = $('<canvas>').
+            css({
+                position: 'absolute',
+                top: 0,
+                left: 0
+            })
+                .attr({
+                id:'linebetas',
+                width: 1920,
+                height: 531
+            })
             $canvas.insertAfter($cvs)
         }
-        let $canvas0 = $canvas.get(0),
-            ctx = $canvas0.getContext('2d'),
-            $cvs0 = $cvs.get(0)
+        if($canvas.get(0).getContext('2d')){
+            $canvas = $canvas.get(0)
+            ctx = $canvas.getContext('2d')
+            $cvs = $cvs.get(0)
+            return {ctx: ctx, canvas: $canvas, cvs: $cvs}
+        }
+        return null
+    }
 
-        $(document).mousemove(function(event){
-            let w = $canvas0.width,
-                h = $canvas0.height
-            $canvas.attr({'width': $cvs0.width, 'height': $cvs0.height})
-            ctx.beginPath()
-            if(dotted != null) ctx.setLineDash(dotted);
-            ctx.strokeStyle=color
-            ctx.lineWidth=widthLine
-            ctx.moveTo(w/2,h/2)
-            ctx.lineTo(event.pageX,event.pageY)
-            ctx.stroke();
+    function betaLine(color = "red", widthLine = 2, dotted = null){
+        let params = makeCnavas()
+        if(params){
+            $(document).mousemove(function(event){
+                let w = params.canvas.width,
+                    h = params.canvas.height
+                $(params.canvas).attr({'width': params.cvs.width, 'height': params.cvs.height})
+                params.ctx.beginPath()
+                if(dotted != null) params.ctx.setLineDash(dotted);
+                params.ctx.strokeStyle=color
+                params.ctx.lineWidth=widthLine
+                params.ctx.moveTo(w/2,h/2)
+                params.ctx.lineTo(event.pageX,event.pageY)
+                params.ctx.stroke();
+            })
+        }
+    }
 
+    function selectAllScopes(){
+        let selectedClass = this.className == 'selectedall' ? true : false
+
+        this.innerText = selectedClass ? selLang.deselectAll : selLang.selectAll
+
+        $(".list_cur input.checkbox_del_cur").each(function(){
+            this.checked = selectedClass
         })
+        $(".checkbox_del_cur:checked").length ? $(".del_cur").fadeIn('slow').css("display","inline-block").text(`Удалить [${$(".checkbox_del_cur:checked").length}]`):$(".del_cur").fadeOut('slow')
     }
 
     function makeMenuButton(firststart = false){
@@ -560,8 +621,10 @@ z-index: 6;
                 "height": "20px",
                 "line-height": "1.5",
                 "opacity": "0.7",
-                "z-index": "5"
-            }))
+                "z-index": "5",
+                "display": ObjSaveCursors.options.buttonShow ? "block" : "none"
+            }).attr("id","buttonInGame"))
+
             $(".menu-block").css("max-height", "375px")
         } else {
             // zombsroyale.io
@@ -588,8 +651,10 @@ z-index: 6;
                         "<div class='rightPanel_options'>"+
                         "<div class='rightPanel_options_inside'>"+
                         "<div class='rightPanel_options_title'>"+selLang.rightOptionsTitle+"</div>"+
+                        "<div class='optionFiels'><a href='javascript:void(0)' title='"+selLang.selectAll+"' id='selectAlltScopes' style='color: cyan !important;font-size: 0.6em;text-decoration: none;'>"+selLang.selectAll+"</a></div>"+
                         "<div class='optionFiels'><a href='javascript:void(0)' title='"+selLang.resetDefault+"' id='resetDefaultScopes' style='color: cyan !important;font-size: 0.6em;text-decoration: none;'>"+selLang.resetDefault+"</a></div>"+
-                        "<div class='optionFiels'>Laser: <input type='checkbox' title='Laser' id='LineLaser'></div>"+
+                        "<div class='optionFiels font_7'>"+selLang.buttonInGame+": <input type='checkbox'"+(ObjSaveCursors.options.buttonShow?"checked":"")+" title='"+selLang.buttonInGameInfo+"' id='buttin_scope_in_game'></div>"+
+                        "<div class='optionFiels'>Laser: <input type='checkbox' title='Laser' id='LineLaser' "+(ObjSaveCursors.options.laserSetting.enabled?"checked":"")+ "></div>"+
                         "<div class='optionFiels'><span style='display: none'>Image aim:<input type='checkbox' id='mouseimgaim' /></span></div>"+
                         "</div>"+
                         "</div>"+
@@ -602,16 +667,47 @@ z-index: 6;
             closeX = $($mPanel).find(".mPanel_cur_title > div").click(function(){
                 $mPanel.fadeOut()
             }),
+            bInG = $($mPanel).find("#buttin_scope_in_game").change(function(){
+                if(ObjSaveCursors.hasOwnProperty("options") && ObjSaveCursors.options.hasOwnProperty("buttonShow")){
+                    ObjSaveCursors.options.buttonShow = this.checked
+                    saveToStorage();
+                    if(debug) console.log('Показывать кнопку в игре:',this.checked)
+                    $("#buttonInGame").css("display", this.checked ? "block" : "none")
+                }
+            }),
             $LineLaser = $($mPanel).find("#LineLaser").change(function(){
+
                 if(this.checked){
-                    let color = prompt(selLang.laserColor, "red"),
-                        widthLine = prompt(selLang.laserWidth, "2"),
-                        dotted = (confirm(selLang.laserDottedOn)) ? prompt(selLang.laserParmDotted, "5,15") : null
+                    let laserSetting = ObjSaveCursors.options.laserSetting,
+                        ls_color = laserSetting.color || "red",
+                        ls_width = laserSetting.width || "2",
+                        ls_dotted_lines = laserSetting.dotted.lines || "5,15",
+
+                        color = prompt(selLang.laserColor, ls_color),
+                        widthLine = prompt(selLang.laserWidth, ls_width),
+                        dotted_enabled = false,
+                        dotted = (dotted_enabled = confirm(selLang.laserDottedOn)) ? prompt(selLang.laserParmDotted, ls_dotted_lines) : null
+
+                    // Save setting
+                    if(confirm(selLang.laserSaveSetting)){
+                        if(ObjSaveCursors.hasOwnProperty("options") && ObjSaveCursors.options.hasOwnProperty("laserSetting")){
+                            ObjSaveCursors.options.laserSetting = {enabled:this.checked, color:color, width: widthLine, dotted: {enabled: dotted_enabled, lines:dotted}}
+                            saveToStorage();
+                        }
+                    }
+
                     if(dotted != null) dotted = dotted.split(',')
+
                     betaLine(color,widthLine,dotted)
                 } else {
+                    ObjSaveCursors.options.laserSetting.enabled = this.checked
+                    saveToStorage();
                     $("#linebetas").remove()
                 }
+            }),
+            $selectAll = $($mPanel).find("#selectAlltScopes").click(function(){
+                $(this).toggleClass("selectedall")
+                selectAllScopes.call(this);
             }),
             resetDefaultScopes = $($mPanel).find("#resetDefaultScopes").click(loadDefaultScopes),
             $addCursor = $("<div class='cur_button add_cur'>").attr('title',selLang.addCrosshair).text(selLang.addCrosshair).click(makeFormAddCursor),
@@ -620,6 +716,18 @@ z-index: 6;
             $mouseimgaim = $($mPanel).find("#mouseimgaim").change(function(){
                 imageCursorAim.call(this)
             })
+
+        if($LineLaser.is(":checked")){
+            let laserSetting = ObjSaveCursors.options.laserSetting,
+                ls_color = laserSetting.color || "red",
+                ls_width = laserSetting.width || "2",
+                ls_dotted_enabled = laserSetting.dotted.enabled || false,
+                ls_dotted_lines = laserSetting.dotted.lines || "5,15"
+
+            ls_dotted_lines =(ls_dotted_enabled && ls_dotted_lines != null)?ls_dotted_lines.split(','):null
+
+            betaLine(ls_color,ls_width,ls_dotted_lines)
+        }
 
         $mPanel.append($cur_overlay);
         $("body").append($mPanel)
@@ -663,14 +771,16 @@ z-index: 6;
                     saveToStorage()
                 }),
                 divTitle = $("<span class='element_cur_title'>").text(self.name.length>15?self.name.substr(0,12)+"...":self.name),
-                divImg = $("<img width='48'>").attr({"src": self.cururl}),
+                divImg = $("<img width='48'>").one('load',function(){
+                    $(this).css("cursor","url("+this.src+")"+this.naturalWidth/2+" "+this.naturalHeight/2+", default")
+                }).attr("src", self.cururl),
                 divImgBox = $("<div class='element_cur_title'>").append(divImg),
                 delCheck = $("<input class='checkbox_del_cur' type='checkbox' title='Удаление'>").click(function(){
                     event.stopPropagation();
                 }),
                 editButton = $("<input type='button' class='checkbox_edit_cur' value='"+selLang.editCrosshair+"' title='"+selLang.editCrosshair+"'>").click(function(){
                     event.stopPropagation();
-                    editCursor(self, index)
+                    makeFormAddCursor(false, {element: self, index: index})
                 })
 
             divCont.append($("<p style='margin: 0;padding: 0;border-bottom: 1px dotted silver;'>").append(editButton,delCheck),divImgBox,divTitle)
@@ -710,15 +820,30 @@ z-index: 6;
                     break;
             }
         })
+        $(".cur_preview").css('cursor','crosshair')
     }
 
-    function makeFormAddCursor(){
+    function ImgSizeData(img, val){
+        $(img).one('load', function(){
+            const w = this.naturalWidth,
+                  h = this.naturalHeight
+            if(w>128 || h>128) alert(selLang.alertMesImage[0]+w+"px x "+h+"px!\n"+selLang.alertMesImage[1])
+            $(".cur_preview").css('cursor','url('+this.src+'), not-allowed')
+            if(this.src !== defaultCursorImage) $(this).data("sizes", {w:w, h:h});
+            else $(this).data("sizes", {w:null, h:null})
+        }).one('error', function(){
+            this.src = defaultCursorImage
+            $(".cur_preview").css('cursor','crosshair')
+        }).attr('src', val)
+    }
+
+    function makeFormAddCursor(editmake = false, params = null){
         let $makeCurForm = $(".makeCursor_form"),
             $cur_overlay = $(".cur_overlay")
 
         if($makeCurForm.length == 0){
             $makeCurForm = $("<div class='makeCursor_form'>")
-            let htmlInner = "<div class='makeCursor_form_title'>Add scope<div title='"+selLang.form_close+"'>X</div></div>"+
+            let htmlInner = "<div class='makeCursor_form_title'><span>"+selLang.addCrosshair+"</span><div title='"+selLang.form_close+"'>X</div></div>"+
                 "<div class='maleCursor_form_body'>"+
                 "<div class='form_field'><span>"+selLang.name+"</span><input type='text' id='name_scope' value='' maxlength='100' placeholder='"+selLang.scopeName+"'></div>"+
                 "<div class='form_field'><span>"+selLang.link+"</span><input type='text' id='link_scope' value='' placeholder='"+selLang.scopeLink+"'></div>"+
@@ -732,10 +857,6 @@ z-index: 6;
 
             $makeCurForm.html(htmlInner)
 
-            $cur_overlay.fadeIn('slow', function(){
-                $makeCurForm.fadeIn('fast')
-            })
-
             $(".mPanel_cur").append($makeCurForm)
 
             $(".makeCursor_form_title > div").click(function(){
@@ -745,33 +866,38 @@ z-index: 6;
                     })
                 })
             })
-            $("#createCursor").click(addCursor)
 
             $("#name_scope").on('input', function(){
                 $("#previewName").text($(this).val())
             })
             $("#link_scope").on('input', function(){
                 let val = $(this).val().trim()
-
-                $("#previewImg").one('load', function(){
-                    const w = this.naturalWidth,
-                          h = this.naturalHeight
-                    if(w>128 || h>128) alert(selLang.alertMesImage[0]+w+"px x "+h+"px!\n"+selLang.alertMesImage[1])
-                    $(".cur_preview").css('cursor','url('+this.src+'), not-allowed')
-                    if(this.src !== defaultCursorImage)$(this).data("sizes", {w:w, h:h}); else $(this).data("sizes", {w:null, h:null})
-                }).one('error', function(){
-                    this.src = defaultCursorImage
-                    $(".cur_preview").css('cursor','crosshair')
-                }).attr('src', val)
-            })
-        } else{
-            $cur_overlay.fadeIn('slow', function(){
-                $makeCurForm.fadeIn('fast')
+                ImgSizeData("#previewImg", val)
             })
         }
+        // Show form
+        $cur_overlay.fadeIn('slow', function(){
+            if(editmake){
+                $(".makeCursor_form_title > span").text(selLang.addCrosshair)
+                $("#createCursor").text(selLang.createScope).off().click(function(){
+                    add_edit_Cursor()
+                })
+            } else {
+                $(".makeCursor_form_title > span").text(selLang.editCrosshair)
+
+                $makeCurForm.find("#name_scope").val(params.element.name)
+                $makeCurForm.find("#link_scope").val(params.element.cururl)
+                ImgSizeData("#previewImg", params.element.cururl)
+
+                $("#createCursor").text(selLang.editEditApply).off().click(function(){
+                    if(params !== null && Object.keys(params).length) add_edit_Cursor(params)
+                })
+            }
+            $makeCurForm.fadeIn('fast')
+        })
     }
 
-    function addCursor(){
+    function add_edit_Cursor(parametri = null){
         let $makeCurForm = $(".makeCursor_form"),
             $cursorName = $makeCurForm.find("#name_scope"),
             $cursorUrl = $makeCurForm.find("#link_scope"),
@@ -815,7 +941,16 @@ z-index: 6;
         }
 
         if(ObjSaveCursors.hasOwnProperty("cursorList")){
-            ObjSaveCursors.cursorList.push({name:cursorNameVal, cururl:cursorUrlVal, active:false})
+            let ovetMessage = selLang.addComplete
+            if(parametri == null){
+                ObjSaveCursors.cursorList.push({name:cursorNameVal, cururl:cursorUrlVal, active:false})
+            } else {
+                if(Object.keys(ObjSaveCursors.cursorList).length && Object.keys(parametri).length){
+                    ObjSaveCursors.cursorList[parametri.index] = {name:cursorNameVal, cururl:cursorUrlVal, active:false}
+                    ovetMessage = selLang.editComplete
+                } else return
+            }
+
             saveToStorage()
 
             $makeCurForm.fadeOut('slow', function(){
@@ -825,7 +960,8 @@ z-index: 6;
             })
 
             updatePanel()
-            alert(selLang.addComplete)
+            alert(ovetMessage)
+
         }
     }
 
@@ -849,29 +985,8 @@ z-index: 6;
         }
     }
 
-    function editCursor(el,index){
-        if(ObjSaveCursors.hasOwnProperty("cursorList") && Object.keys(ObjSaveCursors.cursorList).length){
-            let cursorName = prompt(selLang.scopeName,el.name),
-                cursorUrl = prompt(selLang.scopeLink,el.cururl)
-
-            if(cursorName === null || /^\s?$/i.test(cursorName)){
-                console.log("Null")
-                cursorName = "Croshair_"+Math.floor(Math.random()*10000)
-            }
-
-            if(cursorUrl == null || /^\s?$/i.test(cursorUrl) || !/(?:^https?:\/\/.*\.(?:png|jpg|jpeg|gif|cur|tiff)$|^data:image)/i.test(cursorUrl)){
-                alert(selLang.errorLink)
-                return
-            }
-
-            ObjSaveCursors.cursorList[index] = {name:cursorName,cururl:cursorUrl,active:false}
-            saveToStorage()
-            updatePanel()
-        }
-    }
-
     function delCursor(){
-        if(confirm(selLang.deleteScope)){
+        if(confirm(selLang.delCrosshair)){
             let arr_delete_cursors = []
             $(".list_cur").find("input[type=checkbox]").each(function(index,eleme){
                 if($(this).is(':checked')){
@@ -885,6 +1000,7 @@ z-index: 6;
             saveToStorage()
             $(".del_cur").fadeOut('slow')
             updatePanel()
+            alert(selLang.delComplete)
         }
     }
 
