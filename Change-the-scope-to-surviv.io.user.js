@@ -2,7 +2,7 @@
 // @name  Change the scope to surviv.io
 // @name:ru  Изменить прицел в surviv.io
 // @namespace    https://github.com/AlekPet/
-// @version      0.0.3
+// @version      0.0.4
 // @description  Сhange the scope in the game surviv.io
 // @description:ru  Изменяет прицел в игре surviv.io
 // @copyright    2018, AlekPet (https://github.com/AlekPet)
@@ -775,10 +775,10 @@ font-size: 0.6em;
                     $(this).css("cursor","url("+this.src+")"+this.naturalWidth/2+" "+this.naturalHeight/2+", default")
                 }).attr("src", self.cururl),
                 divImgBox = $("<div class='element_cur_title'>").append(divImg),
-                delCheck = $("<input class='checkbox_del_cur' type='checkbox' title='Удаление'>").click(function(){
+                delCheck = $("<input class='checkbox_del_cur' type='checkbox' title='Удаление'>").click(function(event){
                     event.stopPropagation();
                 }),
-                editButton = $("<input type='button' class='checkbox_edit_cur' value='"+selLang.editCrosshair+"' title='"+selLang.editCrosshair+"'>").click(function(){
+                editButton = $("<input type='button' class='checkbox_edit_cur' value='"+selLang.editCrosshair+"' title='"+selLang.editCrosshair+"'>").click(function(event){
                     event.stopPropagation();
                     makeFormAddCursor(false, {element: self, index: index})
                 })
