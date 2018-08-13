@@ -2,7 +2,7 @@
 // @name  Change the scope to surviv.io
 // @name:ru  Изменить прицел в surviv.io
 // @namespace    https://github.com/AlekPet/
-// @version      0.0.4
+// @version      0.0.5
 // @description  Сhange the scope in the game surviv.io
 // @description:ru  Изменяет прицел в игре surviv.io
 // @copyright    2018, AlekPet (https://github.com/AlekPet)
@@ -126,12 +126,14 @@ border-top: 1px dotted white;
 color: antiquewhite;
 text-shadow: 1px 1px 3px darkgreen;
 }
-.auhor_cur_sel {
+.infoBlock {
+float: right;
+}
+.infoBlock>a{
 font-size: 0.6em;
-color: #56fff1 !important;
 margin-top: 4px;
 padding: 2px;
-float: right;
+text-decoration:none;
 }
 .cur_sel_button_box {
 display: inline-block;
@@ -297,6 +299,34 @@ img#image_aim {
 position: absolute;
 z-index: 6;
 }
+.colorchange_cur {
+width: 20px;
+height: 20px;
+background: radial-gradient(red,orange,yellow,green,cyan,blue,purple);
+border-radius: 10px;
+display: inline-block;
+margin-right: 2px;
+transition: 1s all;
+}
+.colorchange_cur:hover {
+background: radial-gradient(purple,blue,cyan,green,yellow,orange,red);
+}
+.colorChangeButtons{
+width: 70px;
+margin: 2px;
+}
+#setChangeColor {
+background: linear-gradient(#669ab7,#0773b9);
+}
+#setChangeColor:hover {
+background: linear-gradient(#00a4ff,#043656);
+}
+#setDefaultChangeColor {
+background: linear-gradient(#b76666,#b90707);
+}
+#setDefaultChangeColor:hover {
+background: linear-gradient(#ff0000,#5f0303);
+}
 .font_8{
 font-size: 0.8em;
 }
@@ -357,7 +387,18 @@ font-size: 0.6em;
                   deselectAll: "Убрать выделение",
                   buttonInGame: "Кнопка в игре",
                   buttonInGameInfo: "Показывать кнопку \"Выбрать прицел\" в игре",
-                  laserSaveSetting:"Сохранить настройки лазера?"
+                  laserSaveSetting:"Сохранить настройки лазера?",
+                  laser: "Лазер",
+                  changeColor: "Изменить цвет",
+                  applyColor: "Применить",
+                  applyColorHint: "Применить выбранный цвет",
+                  resetColor: "Сбросить",
+                  resetColorHint: "Установить значение по умолчанию",
+                  resetColorAnswer:"Сбросить настройки цвета?",
+                  not_selected: "Не выбран",
+                  input_colors: ["Красный","Зеленый","Синий"],
+                  error_ChangeColor: "Выберите прицел, для редактирования цвета!\nНажмите на радужный кружок, возле прицелов!",
+                  donate: ["Поддержка","Поддержать автора"]
               },
               en:{
                   form_title: "Select scope",
@@ -399,7 +440,18 @@ font-size: 0.6em;
                   deselectAll: "Deselect All",
                   buttonInGame: "Button in the game",
                   buttonInGameInfo: "Show the \"Select Sight\" button in the game",
-                  laserSaveSetting: "Save laser settings?"
+                  laserSaveSetting: "Save laser settings?",
+                  laser: "Laser",
+                  changeColor: "Change color",
+                  applyColor: "Apply",
+                  applyColorHint: "Apply selected color",
+                  resetColor: "Reset",
+                  resetColorHint: "Reset to default",
+                  resetColorAnswer:"Do you want to reset the color settings?",
+                  not_selected: "Not selected",
+                  input_colors: ["Red", "Green", "Blue"],
+                  error_ChangeColor: "Select the scope, to edit the color!\nClick on the rainbow circle, near the scopes!",
+                  donate: ["Donate","Donate to the author"]
               }
           },
 
@@ -480,9 +532,11 @@ font-size: 0.6em;
             urlCur = cur
         } else {
             let x = imgInside.naturalWidth/2,
-                y = imgInside.naturalHeight/2
+                y = imgInside.naturalHeight/2,
 
-            urlCur = 'url("'+cur.cururl+'") '+x+' '+y+', crosshair'
+                set_cursor = cur.change_color && cur.change_color.src_new ? cur.change_color.src_new : cur.cururl
+
+            urlCur = 'url("'+set_cursor+'") '+x+' '+y+', crosshair'
 
             if(debug) console.log('Применяем:', urlCur)
         }
@@ -654,14 +708,28 @@ font-size: 0.6em;
                         "<div class='optionFiels'><a href='javascript:void(0)' title='"+selLang.selectAll+"' id='selectAlltScopes' style='color: cyan !important;font-size: 0.6em;text-decoration: none;'>"+selLang.selectAll+"</a></div>"+
                         "<div class='optionFiels'><a href='javascript:void(0)' title='"+selLang.resetDefault+"' id='resetDefaultScopes' style='color: cyan !important;font-size: 0.6em;text-decoration: none;'>"+selLang.resetDefault+"</a></div>"+
                         "<div class='optionFiels font_7'>"+selLang.buttonInGame+": <input type='checkbox'"+(ObjSaveCursors.options.buttonShow?"checked":"")+" title='"+selLang.buttonInGameInfo+"' id='buttin_scope_in_game'></div>"+
-                        "<div class='optionFiels'>Laser: <input type='checkbox' title='Laser' id='LineLaser' "+(ObjSaveCursors.options.laserSetting.enabled?"checked":"")+ "></div>"+
+                        "<div class='optionFiels'>"+selLang.laser+": <input type='checkbox' title='"+selLang.laser+"' id='LineLaser' "+(ObjSaveCursors.options.laserSetting.enabled?"checked":"")+ "></div>"+
+                        "<div class='optionFiels' style='margin-top: 50%;'><div class='font_8'>"+selLang.changeColor+"</div>"+
+                        "<div class='colorRange'>"+
+                        "<div class='canvasColor'><canvas id='canvasChangeColor' style='width:auto;height:auto;border: 1px dotted;'></canvas></div>"+
+                        "<span style='color:red;'>"+selLang.input_colors[0].charAt(0)+"</span>:<input type='range' max='255' min='0' class='rangeColors' style='width: 60px;' value='0' title='"+selLang.input_colors[0]+"'><br>"+
+                        "<span style='color:green;'>"+selLang.input_colors[1].charAt(0)+"</span>:<input type='range' max='255' min='0' class='rangeColors' style='width: 60px;' value='0' title='"+selLang.input_colors[1]+"'><br>"+
+                        "<span style='color:blue;'>"+selLang.input_colors[2].charAt(0)+"</span>:<input type='range' max='255' min='0' class='rangeColors' style='width: 60px;' value='0' title='"+selLang.input_colors[2]+"'><br>"+
+                        "<div id='setChangeColor' class='cur_button colorChangeButtons' title='"+selLang.applyColorHint+"'>"+selLang.applyColor+"</div>"+
+                        "<div id='setDefaultChangeColor' class='cur_button colorChangeButtons' title='"+selLang.resetColorHint+"'>"+selLang.resetColor+"</div>"+
+                        "</div>"+
+                        "</div>"+
                         "<div class='optionFiels'><span style='display: none'>Image aim:<input type='checkbox' id='mouseimgaim' /></span></div>"+
                         "</div>"+
                         "</div>"+
                         "</div>"+
                         "<div class='mPanel_cur_foot'>"+
                         "<div class='cur_sel_button_box'></div>"+
-                        "<a href='https://github.com/AlekPet' target='_blank' title='AlekPet Guthub ^_^' class='auhor_cur_sel'>AlekPet 2018</a></div>"+
+                        "<div class='infoBlock'>"+
+                        "<a href='https://docs.google.com/document/d/1XTnSJoJHyQdqxPfmMYoBSyToXHKEW4QnQDAVsL9tcgU' target='_blank' style='color: yellow !important;' title='"+selLang.donate[1]+"'>"+selLang.donate[0]+"</a>"+
+                        "<a href='https://github.com/AlekPet' target='_blank' title='AlekPet Guthub ^_^' style=''color: #56fff1 !important;''>AlekPet 2018</a>"+
+                        "</div>"+
+                        "</div>"+
                         "</div>"),
             $cur_overlay = $("<div class='cur_overlay'>"),
             closeX = $($mPanel).find(".mPanel_cur_title > div").click(function(){
@@ -773,7 +841,7 @@ font-size: 0.6em;
                 divTitle = $("<span class='element_cur_title'>").text(self.name.length>15?self.name.substr(0,12)+"...":self.name),
                 divImg = $("<img width='48'>").one('load',function(){
                     $(this).css("cursor","url("+this.src+")"+this.naturalWidth/2+" "+this.naturalHeight/2+", default")
-                }).attr("src", self.cururl),
+                }).attr("src", self.change_color ? self.change_color.src_new : self.cururl),
                 divImgBox = $("<div class='element_cur_title'>").append(divImg),
                 delCheck = $("<input class='checkbox_del_cur' type='checkbox' title='Удаление'>").click(function(event){
                     event.stopPropagation();
@@ -783,7 +851,16 @@ font-size: 0.6em;
                     makeFormAddCursor(false, {element: self, index: index})
                 })
 
-            divCont.append($("<p style='margin: 0;padding: 0;border-bottom: 1px dotted silver;'>").append(editButton,delCheck),divImgBox,divTitle)
+            if(/^data:image/i.test(self.cururl)){
+                let colorChange = $("<div class='colorchange_cur' title='"+selLang.changeColor+"'>").click(function(event){
+                    event.stopPropagation();
+                    changeColor({element: self, img: divImg, index: index})
+                })
+
+                divCont.append($("<p style='margin: 0;padding: 0;border-bottom: 1px dotted silver;'>").append(colorChange,editButton,delCheck),divImgBox,divTitle)
+            } else {
+                divCont.append($("<p style='margin: 0;padding: 0;border-bottom: 1px dotted silver;'>").append(editButton,delCheck),divImgBox,divTitle)
+            }
             $(ListBox).append(divCont)
 
             if(self.active){
@@ -1004,6 +1081,106 @@ font-size: 0.6em;
         }
     }
 
+    function setColorsScope(){
+        let can = document.getElementById("canvasChangeColor"),
+            ctx = can.getContext("2d"),
+            imgData = ctx.getImageData(0, 0, can.width, can.height),
+            eli = document.getElementsByClassName("rangeColors"),
+            r = parseInt(eli[0].value),
+            g = parseInt(eli[1].value),
+            b = parseInt(eli[2].value),
+            a = 255
+
+        for (var i = 0; i < imgData.data.length; i += 4) {
+
+            imgData.data[i] = r; //r
+            imgData.data[i + 1] = g; //g
+            imgData.data[i + 2] = b; //b
+            //imgData.data[i + 3] = a; // alpha
+        }
+        ctx.putImageData(imgData, 0, 0);
+    }
+
+    function setChangeColor(params){
+        const eli = document.getElementsByClassName("rangeColors"),
+              r=parseInt(eli[0].value),
+              g=parseInt(eli[1].value),
+              b=parseInt(eli[2].value),
+              a = 255,
+              canvas = document.getElementById("canvasChangeColor")
+
+        if(Object.keys(ObjSaveCursors.cursorList[params.index]).length && canvas){
+            if(!ObjSaveCursors.cursorList[params.index].hasOwnProperty('change_color')){
+                ObjSaveCursors.cursorList[params.index].change_color = {colors:{r:r,g:g,b:b,a:a}, src_new: canvas.toDataURL("image/png")}
+            } else {
+                ObjSaveCursors.cursorList[params.index].change_color = {colors:{r:r,g:g,b:b,a:a}, src_new: canvas.toDataURL("image/png")}
+            }
+            if(debug) console.log("Цвета:",ObjSaveCursors.cursorList[params.index]);
+            saveToStorage();
+            updatePanel();
+        } else alert("Object not found, or canvas not isset!");
+    }
+
+    function setDefaultCursorColors(params){
+        if(Object.keys(params.element.change_color).length && params.element.change_color.src_new){
+            if(confirm(selLang.resetColorAnswer)){
+                delete ObjSaveCursors.cursorList[params.index].change_color
+                saveToStorage();
+                updatePanel();
+                new Array().slice.call(document.getElementsByClassName("rangeColors")).forEach(function(el){el.value = 0})
+                changeColor(params)
+            }
+        }
+    }
+
+    function changeColor(params = null){
+        let can, ctx,img
+
+        can = document.getElementById("canvasChangeColor")
+        ctx = can.getContext("2d")
+
+        if(params != null && Object.keys(params).length){
+
+            if(params.element.change_color && Object.keys(params.element.change_color.colors).length){
+                let colors = params.element.change_color.colors,
+                    a = colors.a,
+                    inptuts_colors = document.getElementsByClassName("rangeColors")
+                inptuts_colors[0].value = colors.r
+                inptuts_colors[1].value = colors.g
+                inptuts_colors[2].value = colors.b
+            }
+
+            img = new Image()
+            img.onload = function() {
+                can.width = this.naturalWidth
+                can.height = this.naturalHeight
+                ctx.drawImage(this, 0, 0)
+                setColorsScope();
+            }
+            img.src = params.img.attr('src')
+
+            $("#setChangeColor").off().click(setChangeColor.bind(ctx, params))
+            $("#setDefaultChangeColor").off().click(setDefaultCursorColors.bind(ctx, params))
+
+        } else {
+            can.width = 80
+            can.height = 80
+            ctx.font="10px Georgia";
+            ctx.textAlign="center";
+            ctx.fillStyle = "white";
+            ctx.fillText(selLang.not_selected.toUpperCase(),can.width/2,can.height/2);
+
+            let eli = document.getElementsByClassName("rangeColors")
+            for (let i = 0; i < eli.length; i++) {
+                eli[i].addEventListener("input", setColorsScope)
+            }
+
+            $("#setChangeColor").add($("#setDefaultChangeColor")).off().click(function(){
+                alert(selLang.error_ChangeColor)
+            })
+        }
+    }
+
     function init(){
         let firststart = false;
         if(loadStorage()){
@@ -1013,6 +1190,7 @@ font-size: 0.6em;
         makeMenuButton(firststart)
         makePanel()
         updatePanel(firststart)
+        changeColor()
     }
     init()
 })();
