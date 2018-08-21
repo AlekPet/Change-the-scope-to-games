@@ -2,14 +2,16 @@
 // @name  Change the scope to surviv.io
 // @name:ru  Изменить прицел в surviv.io
 // @namespace    https://github.com/AlekPet/
-// @version      0.0.5
+// @version      0.0.6
 // @description  Сhange the scope in the game surviv.io
 // @description:ru  Изменяет прицел в игре surviv.io
 // @copyright    2018, AlekPet (https://github.com/AlekPet)
 // @author       AlekPet
 // @license      MIT; https://opensource.org/licenses/MIT
-// @match        http://surviv.io/
-// @match        http://zombsroyale.io/
+// @match        *://surviv.io/*
+// @match        *://surviv2.io/*
+// @match        *://2dbattleroyale.com/*
+// @match        *://zombsroyale.io/*
 // @icon         http://surviv.io/img/icon_app.png
 // @updateURL    https://raw.githubusercontent.com/AlekPet/Change-the-scope-to-surviv.io/master/Change-the-scope-to-surviv.io.user.js
 // @downloadURL  https://raw.githubusercontent.com/AlekPet/Change-the-scope-to-surviv.io/master/Change-the-scope-to-surviv.io.user.js
@@ -515,11 +517,13 @@ font-size: 0.6em;
         }
 
     function setGameCursor(urlCur){
-        if(location.href.includes("surviv.io")){
+        if(location.href.includes("zombsroyale.io")){
+            // zombsroyale.io
+            $("canvas").css({'cursor':'url("'+urlCur+'"), default'})
+        } else {
+            // surviv.io
             $("#game-area-wrapper").css({'cursor': urlCur})
             $(".zomb_menu-option").show()
-        } else {
-            $("canvas").css({'cursor':'url("'+urlCur+'"), default'})
         }
     }
 
@@ -647,8 +651,23 @@ font-size: 0.6em;
 
     function makeMenuButton(firststart = false){
         let $openSelectCur = null
-        if(location.href.includes("surviv.io")){
-            // surviv.io/
+
+        if(location.href.includes("zombsroyale.io")){
+            // zombsroyale.io
+            $openSelectCur = $('<a class="zomb_btn-red zomb_btn-darken zomb_menu-option">'+selLang.selectScope+'</a>').click(function(){
+                if(firststart && ObjSaveCursors.options.firstRun) {
+                    if(debug) console.log("Прицелы не найдены, загрузить стандартные!")
+                    loadDefaultScopes(firststart)
+
+                    ObjSaveCursors.options.firstRun = false
+                    saveToStorage()
+                }
+                $(".mPanel_cur").fadeToggle('slow')
+            })
+            $openSelectCur.insertAfter(".canvas-loading")
+            setTimeout(checkCursorStartup, 1000);
+        } else {
+            // surviv.io
             $openSelectCur = $('<a class="btn-green btn-darken menu-option">'+selLang.selectScope+'</a>')
                 .css({
                 "background": "#af5050",
@@ -680,20 +699,6 @@ font-size: 0.6em;
             }).attr("id","buttonInGame"))
 
             $(".menu-block").css("max-height", "375px")
-        } else {
-            // zombsroyale.io
-            $openSelectCur = $('<a class="zomb_btn-red zomb_btn-darken zomb_menu-option">'+selLang.selectScope+'</a>').click(function(){
-                if(firststart && ObjSaveCursors.options.firstRun) {
-                    if(debug) console.log("Прицелы не найдены, загрузить стандартные!")
-                    loadDefaultScopes(firststart)
-
-                    ObjSaveCursors.options.firstRun = false
-                    saveToStorage()
-                }
-                $(".mPanel_cur").fadeToggle('slow')
-            })
-            $openSelectCur.insertAfter(".canvas-loading")
-            setTimeout(checkCursorStartup, 1000);
         }
     }
 
