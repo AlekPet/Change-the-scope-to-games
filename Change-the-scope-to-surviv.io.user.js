@@ -2,7 +2,7 @@
 // @name  Change the scope to surviv.io
 // @name:ru  Изменить прицел в surviv.io
 // @namespace    https://github.com/AlekPet/
-// @version      0.0.6
+// @version      0.0.7
 // @description  Сhange the scope in the game surviv.io
 // @description:ru  Изменяет прицел в игре surviv.io
 // @copyright    2018, AlekPet (https://github.com/AlekPet)
@@ -30,12 +30,12 @@ position: fixed;
 top: 5%;
 left: 50%;
 background: #dadada;
-max-width: 600px;
-width: 600px;
+max-width: 650px;
+width: 650px;
 z-index: 4;
 border: 1px solid silver;
 box-shadow: 2px 2px 5px #847b7b;
-margin-left: -300px;
+margin-left: -325px;
 text-align: center;
 display: none;
 }
@@ -75,7 +75,7 @@ user-select: none;
 }
 .rightPanel_options_inside {
 border: 1px solid;
-max-height: 495px;
+width: 150px;
 overflow-y: auto;
 }
 .mPanel_cur_list_box {
@@ -88,7 +88,7 @@ border-top: 1px dotted;
 ul.list_cur {
 padding: 0;
 margin: 0;
-height: 500px;
+height: 550px;
 width: 480px;
 overflow-y: auto;
 }
@@ -97,6 +97,7 @@ min-width: 88px;
 min-height: 88px;
 width: 88px;
 height: 88px;
+overflow: hidden;
 }
 .list_cur > .element_cur_cont {
 list-style: none;
@@ -319,6 +320,7 @@ margin: 2px;
 }
 #setChangeColor {
 background: linear-gradient(#669ab7,#0773b9);
+margin-top: 10px;
 }
 #setChangeColor:hover {
 background: linear-gradient(#00a4ff,#043656);
@@ -328,6 +330,17 @@ background: linear-gradient(#b76666,#b90707);
 }
 #setDefaultChangeColor:hover {
 background: linear-gradient(#ff0000,#5f0303);
+}
+.canvasColor{
+width: 128px;
+height: 128px;
+border: 1px dotted;
+margin: 0 auto;
+display: table;
+}
+.canvasColor>div{
+display: table-cell;
+vertical-align: middle;
 }
 .font_8{
 font-size: 0.8em;
@@ -391,15 +404,16 @@ font-size: 0.6em;
                   buttonInGameInfo: "Показывать кнопку \"Выбрать прицел\" в игре",
                   laserSaveSetting:"Сохранить настройки лазера?",
                   laser: "Лазер",
-                  changeColor: "Изменить цвет",
+                  changeColor: "Изменить цвет/размер",
                   applyColor: "Применить",
-                  applyColorHint: "Применить выбранный цвет",
+                  applyColorHint: "Применить выбранный цвет и размер",
                   resetColor: "Сбросить",
                   resetColorHint: "Установить значение по умолчанию",
-                  resetColorAnswer:"Сбросить настройки цвета?",
+                  resetColorAnswer:"Сбросить настройки цвета и размера?",
                   not_selected: "Не выбран",
                   input_colors: ["Красный","Зеленый","Синий"],
-                  error_ChangeColor: "Выберите прицел, для редактирования цвета!\nНажмите на радужный кружок, возле прицелов!",
+                  error_ChangeColor: "Выберите прицел, для редактирования цвета и размера!\nНажмите на радужный кружок, возле прицелов!",
+                  scopeSize: "Размер",
                   donate: ["Поддержка","Поддержать автора"]
               },
               en:{
@@ -444,15 +458,16 @@ font-size: 0.6em;
                   buttonInGameInfo: "Show the \"Select Sight\" button in the game",
                   laserSaveSetting: "Save laser settings?",
                   laser: "Laser",
-                  changeColor: "Change color",
+                  changeColor: "Change color/size",
                   applyColor: "Apply",
-                  applyColorHint: "Apply selected color",
+                  applyColorHint: "Apply selected color and size",
                   resetColor: "Reset",
                   resetColorHint: "Reset to default",
-                  resetColorAnswer:"Do you want to reset the color settings?",
+                  resetColorAnswer:"Do you want to reset the color and size settings?",
                   not_selected: "Not selected",
                   input_colors: ["Red", "Green", "Blue"],
-                  error_ChangeColor: "Select the scope, to edit the color!\nClick on the rainbow circle, near the scopes!",
+                  error_ChangeColor: "Select the scope, to edit the color and size!\nClick on the rainbow circle, near the scopes!",
+                  scopeSize: "Size",
                   donate: ["Donate","Donate to the author"]
               }
           },
@@ -714,12 +729,15 @@ font-size: 0.6em;
                         "<div class='optionFiels'><a href='javascript:void(0)' title='"+selLang.resetDefault+"' id='resetDefaultScopes' style='color: cyan !important;font-size: 0.6em;text-decoration: none;'>"+selLang.resetDefault+"</a></div>"+
                         "<div class='optionFiels font_7'>"+selLang.buttonInGame+": <input type='checkbox'"+(ObjSaveCursors.options.buttonShow?"checked":"")+" title='"+selLang.buttonInGameInfo+"' id='buttin_scope_in_game'></div>"+
                         "<div class='optionFiels'>"+selLang.laser+": <input type='checkbox' title='"+selLang.laser+"' id='LineLaser' "+(ObjSaveCursors.options.laserSetting.enabled?"checked":"")+ "></div>"+
-                        "<div class='optionFiels' style='margin-top: 50%;'><div class='font_8'>"+selLang.changeColor+"</div>"+
+                        "<div class='optionFiels' style='margin-top: 20%;'><div class='font_8'>"+selLang.changeColor+"</div>"+
                         "<div class='colorRange'>"+
-                        "<div class='canvasColor'><canvas id='canvasChangeColor' style='width:auto;height:auto;border: 1px dotted;'></canvas></div>"+
-                        "<span style='color:red;'>"+selLang.input_colors[0].charAt(0)+"</span>:<input type='range' max='255' min='0' class='rangeColors' style='width: 60px;' value='0' title='"+selLang.input_colors[0]+"'><br>"+
-                        "<span style='color:green;'>"+selLang.input_colors[1].charAt(0)+"</span>:<input type='range' max='255' min='0' class='rangeColors' style='width: 60px;' value='0' title='"+selLang.input_colors[1]+"'><br>"+
-                        "<span style='color:blue;'>"+selLang.input_colors[2].charAt(0)+"</span>:<input type='range' max='255' min='0' class='rangeColors' style='width: 60px;' value='0' title='"+selLang.input_colors[2]+"'><br>"+
+                        "<div class='canvasColor'><div><canvas id='canvasChangeColor' style='width:auto;height:auto;'></canvas></div></div>"+
+                        "<span style='color:red;'>"+selLang.input_colors[0].charAt(0)+"</span>:<input type='range' max='255' min='0' class='rangeColors' style='width: 100px;' value='0' title='"+selLang.input_colors[0]+"'><br>"+
+                        "<span style='color:green;'>"+selLang.input_colors[1].charAt(0)+"</span>:<input type='range' max='255' min='0' class='rangeColors' style='width: 100px;' value='0' title='"+selLang.input_colors[1]+"'><br>"+
+                        "<span style='color:blue;'>"+selLang.input_colors[2].charAt(0)+"</span>:<input type='range' max='255' min='0' class='rangeColors' style='width: 100px;' value='0' title='"+selLang.input_colors[2]+"'><br>"+
+                        "<div>"+
+                        "<span style='color:pink;'>"+selLang.scopeSize+":</span><br><input type='range' id='rangeSize' max='128' min='1' step='1' style='width: 100px;' value='0' title='Size scope'><br><span id='rangeSizeValue'>0x0</span>"+
+                        "</div>"+
                         "<div id='setChangeColor' class='cur_button colorChangeButtons' title='"+selLang.applyColorHint+"'>"+selLang.applyColor+"</div>"+
                         "<div id='setDefaultChangeColor' class='cur_button colorChangeButtons' title='"+selLang.resetColorHint+"'>"+selLang.resetColor+"</div>"+
                         "</div>"+
@@ -1086,6 +1104,31 @@ font-size: 0.6em;
         }
     }
 
+    function resize(valS){
+        let canvas = document.getElementById("canvasChangeColor"),
+            ctx = canvas.getContext("2d")
+
+        $("<img>").one("load", function() {
+            var oc = document.createElement('canvas'),
+                octx = oc.getContext('2d');
+
+            if(this.naturalWidth >= this.naturalHeight){
+                canvas.width = valS;
+                canvas.height = canvas.width * this.naturalHeight / this.naturalWidth;
+            } else if(this.naturalWidth < this.naturalHeight){
+                canvas.width = canvas.height * this.naturalWidth / this.naturalHeight;
+                canvas.height = valS;
+            }
+            ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
+            $("#rangeSizeValue").text(canvas.width+"x"+canvas.height)
+        }).attr('src', $("#canvasChangeColor").data("imagesrc"))
+    }
+
+    function setSizeParams(can){
+        $("#rangeSize").val(can.width >= can.height ? can.width : can.height)
+        $("#rangeSizeValue").text(can.width+"x"+can.height)
+    }
+
     function setColorsScope(){
         let can = document.getElementById("canvasChangeColor"),
             ctx = can.getContext("2d"),
@@ -1104,10 +1147,12 @@ font-size: 0.6em;
             //imgData.data[i + 3] = a; // alpha
         }
         ctx.putImageData(imgData, 0, 0);
+        $.data(can, "imagesrc", can.toDataURL("image/png"))
     }
 
     function setChangeColor(params){
         const eli = document.getElementsByClassName("rangeColors"),
+              size = parseInt(document.getElementById("rangeSize").value),
               r=parseInt(eli[0].value),
               g=parseInt(eli[1].value),
               b=parseInt(eli[2].value),
@@ -1116,9 +1161,9 @@ font-size: 0.6em;
 
         if(Object.keys(ObjSaveCursors.cursorList[params.index]).length && canvas){
             if(!ObjSaveCursors.cursorList[params.index].hasOwnProperty('change_color')){
-                ObjSaveCursors.cursorList[params.index].change_color = {colors:{r:r,g:g,b:b,a:a}, src_new: canvas.toDataURL("image/png")}
+                ObjSaveCursors.cursorList[params.index].change_color = {colors:{r:r,g:g,b:b,a:a,size:size}, src_new: canvas.toDataURL("image/png")}
             } else {
-                ObjSaveCursors.cursorList[params.index].change_color = {colors:{r:r,g:g,b:b,a:a}, src_new: canvas.toDataURL("image/png")}
+                ObjSaveCursors.cursorList[params.index].change_color = {colors:{r:r,g:g,b:b,a:a,size:size}, src_new: canvas.toDataURL("image/png")}
             }
             if(debug) console.log("Цвета:",ObjSaveCursors.cursorList[params.index]);
             saveToStorage();
@@ -1127,12 +1172,13 @@ font-size: 0.6em;
     }
 
     function setDefaultCursorColors(params){
-        if(Object.keys(params.element.change_color).length && params.element.change_color.src_new){
+        if(params.element.hasOwnProperty("change_color") && Object.keys(params.element.change_color).length && params.element.change_color.hasOwnProperty("src_new")){
             if(confirm(selLang.resetColorAnswer)){
                 delete ObjSaveCursors.cursorList[params.index].change_color
                 saveToStorage();
                 updatePanel();
                 new Array().slice.call(document.getElementsByClassName("rangeColors")).forEach(function(el){el.value = 0})
+                params.img.attr('src',params.element.cururl)
                 changeColor(params)
             }
         }
@@ -1153,6 +1199,9 @@ font-size: 0.6em;
                 inptuts_colors[0].value = colors.r
                 inptuts_colors[1].value = colors.g
                 inptuts_colors[2].value = colors.b
+                $("#rangeSize").data("sizeval",colors.size)
+            } else {
+                new Array().slice.call(document.getElementsByClassName("rangeColors")).forEach(function(el){el.value = 0})
             }
 
             img = new Image()
@@ -1160,7 +1209,9 @@ font-size: 0.6em;
                 can.width = this.naturalWidth
                 can.height = this.naturalHeight
                 ctx.drawImage(this, 0, 0)
-                setColorsScope();
+
+                $.data(can, "imagesrc", this.src)
+                setSizeParams(can)
             }
             img.src = params.img.attr('src')
 
@@ -1179,6 +1230,11 @@ font-size: 0.6em;
             for (let i = 0; i < eli.length; i++) {
                 eli[i].addEventListener("input", setColorsScope)
             }
+
+            // Size
+            $("#rangeSize").on("input", function(){
+                resize(this.value)
+            })
 
             $("#setChangeColor").add($("#setDefaultChangeColor")).off().click(function(){
                 alert(selLang.error_ChangeColor)
