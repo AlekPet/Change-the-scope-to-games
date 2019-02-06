@@ -2,7 +2,7 @@
 // @name  Change the scope to surviv.io
 // @name:ru  Изменить прицел в surviv.io
 // @namespace    https://github.com/AlekPet/
-// @version      0.0.7
+// @version      0.0.7.1
 // @description  Сhange the scope in the game surviv.io
 // @description:ru  Изменяет прицел в игре surviv.io
 // @copyright    2018, AlekPet (https://github.com/AlekPet)
@@ -474,7 +474,12 @@ font-size: 0.6em;
 
           debug = false,
 
-          defaultCursorImage = "https://github.com/AlekPet/Change-the-scope-to-surviv.io/raw/master/assets/images/default.png"
+          myVersion = GM_info.script.version,
+
+          defaultCursorImage = "https://github.com/AlekPet/Change-the-scope-to-surviv.io/raw/master/assets/images/default.png",
+
+          nav_platform = window.navigator.platform.toLowerCase(),
+          os_var = nav_platform.indexOf("win") > -1 ? "win" : nav_platform.indexOf("mac") ? "mac" : "other"
 
     var ObjSaveCursors = null, language = 'en-US',
         selLang = lang.en;
@@ -647,7 +652,7 @@ font-size: 0.6em;
                 params.ctx.strokeStyle=color
                 params.ctx.lineWidth=widthLine
                 params.ctx.moveTo(w/2,h/2)
-                params.ctx.lineTo(event.pageX,event.pageY)
+                os_var == "win" ? params.ctx.lineTo(event.pageX,event.pageY) : os_var == "mac" ? params.ctx.lineTo(2*event.pageX, 2*event.pageY) : params.ctx.lineTo(2*event.pageX, 2*event.pageY)
                 params.ctx.stroke();
             })
         }
@@ -719,7 +724,7 @@ font-size: 0.6em;
 
     function makePanel(firststart){
         let $mPanel = $("<div class='mPanel_cur'>"+
-                        "<div class='mPanel_cur_title'>"+selLang.form_title+"<div style='cursor:pointer;' title='"+selLang.form_close+"'>X</div></div>"+
+                        "<div class='mPanel_cur_title'>"+selLang.form_title+"  v"+myVersion+"<div style='cursor:pointer;' title='"+selLang.form_close+"'>X</div></div>"+
                         "<div class='table_box'>"+
                         "<div class='mPanel_cur_list_box'><ul class='list_cur'></ul></div>"+
                         "<div class='rightPanel_options'>"+
