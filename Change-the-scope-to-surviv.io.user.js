@@ -2,8 +2,8 @@
 // @name  Change the scope to surviv.io
 // @name:ru  Изменить прицел в surviv.io
 // @namespace    https://github.com/AlekPet/
-// @version      0.0.7.1
-// @description  Сhange the scope in the game surviv.io
+// @version      0.0.8
+// @description  Сhange the scope in the game surviv.io, and zombsroyale.io
 // @description:ru  Изменяет прицел в игре surviv.io
 // @copyright    2018, AlekPet (https://github.com/AlekPet)
 // @author       AlekPet
@@ -91,13 +91,17 @@ margin: 0;
 height: 550px;
 width: 480px;
 overflow-y: auto;
+display: flex;
+flex-direction: row;
+flex-wrap: wrap;
 }
 .list_cur > li {
-min-width: 88px;
+/*min-width: 88px;
 min-height: 88px;
+max-height: 120px;
 width: 88px;
 height: 88px;
-overflow: hidden;
+overflow: hidden;*/
 }
 .list_cur > .element_cur_cont {
 list-style: none;
@@ -109,6 +113,7 @@ margin: 5px;
 cursor: pointer;
 vertical-align: top;
 background: linear-gradient(to right bottom, silver,white);
+flex: 1 0 88px;
 }
 .element_cur_cont:hover {
 background: linear-gradient(#00ffff75,#dbff005c);
@@ -200,7 +205,7 @@ position: fixed;
 text-shadow: 0 1px 2px rgba(0,0,0,.25);
 top: 50%;
 right: 0;
-display: none;
+display: block;
 opacity: 0.7;
 transform: translate(0, -20px) rotateZ(-90deg);
 transform-origin: bottom right;
@@ -213,6 +218,7 @@ box-sizing: border-box;
 margin-bottom: 8px;
 text-align: center;
 text-decoration: none;
+z-index:999;
 }
 .zomb_btn-darken:active, .zomb_btn-darken:hover {
 color: inherit;
@@ -482,7 +488,9 @@ font-size: 0.6em;
           os_var = nav_platform.indexOf("win") > -1 ? "win" : nav_platform.indexOf("mac") ? "mac" : "other"
 
     var ObjSaveCursors = null, language = 'en-US',
-        selLang = lang.en;
+        selLang = lang.en,
+
+        current_game = location.href.includes("zombsroyale.io")?"zombsroyale":"surviv"
 
     language = window.navigator.userLanguage || window.navigator.language
 
@@ -539,7 +547,10 @@ font-size: 0.6em;
     function setGameCursor(urlCur){
         if(location.href.includes("zombsroyale.io")){
             // zombsroyale.io
-            $("canvas").css({'cursor':'url("'+urlCur+'"), default'})
+            let x = document.getElementById("#canvas"),
+                las = document.getElementById("linebetas")
+            $(x).css({cursor:urlCur,transform:"scale(1.42857) !important"})
+            $(las).css({cursor:urlCur,transform:"scale(1.42857) !important",position:"absolute",top:0,left:0})
         } else {
             // surviv.io
             $("#game-area-wrapper").css({'cursor': urlCur})
@@ -614,28 +625,46 @@ font-size: 0.6em;
     }
 
     function makeCnavas(){
-        let $canvas = $("#linebetas"),
-            $cvs = $("#cvs"),
-            ctx
-        if($("#linebetas").length == 0){
-            $canvas = $('<canvas>').
-            css({
-                position: 'absolute',
-                top: 0,
-                left: 0
-            })
-                .attr({
-                id:'linebetas',
-                width: 1920,
-                height: 531
-            })
-            $canvas.insertAfter($cvs)
-        }
-        if($canvas.get(0).getContext('2d')){
-            $canvas = $canvas.get(0)
-            ctx = $canvas.getContext('2d')
-            $cvs = $cvs.get(0)
-            return {ctx: ctx, canvas: $canvas, cvs: $cvs}
+        if(current_game == "surviv"){
+            let $canvas = $("#linebetas"),
+                $cvs = $("#cvs"),
+                ctx
+            if($canvas.length == 0){
+                $canvas = $('<canvas>').
+                css({
+                    position: 'absolute',
+                    top: 0,
+                    left: 0
+                })
+                    .attr({
+                    id:'linebetas',
+                    width: 1920,
+                    height: 531
+                })
+                $canvas.insertAfter($cvs)
+            }
+            if($canvas.get(0).getContext('2d')){
+                $canvas = $canvas.get(0)
+                ctx = $canvas.getContext('2d')
+                $cvs = $cvs.get(0)
+                return {ctx: ctx, canvas: $canvas, cvs: $cvs}
+            }
+        } else {
+            let canvas = document.getElementById("linebetas"),
+                cvs = document.getElementById("#canvas"),
+                ctx
+            if(!canvas){
+                canvas = document.createElement('canvas')
+                canvas.setAttribute("style", "display:none;position:absolute;top:0;left:0;transform:scale(1.42857) !important;")
+                canvas.id="linebetas"
+                canvas.width=1920
+                canvas.height=531
+                cvs.parentNode.insertBefore(canvas, cvs.nextSibling)
+            }
+            if(canvas.getContext('2d')){
+                ctx = canvas.getContext('2d')
+                return {ctx: ctx, canvas: canvas, cvs: cvs}
+            }
         }
         return null
     }
@@ -652,7 +681,10 @@ font-size: 0.6em;
                 params.ctx.strokeStyle=color
                 params.ctx.lineWidth=widthLine
                 params.ctx.moveTo(w/2,h/2)
-                os_var == "win" ? params.ctx.lineTo(event.pageX,event.pageY) : os_var == "mac" ? params.ctx.lineTo(2*event.pageX, 2*event.pageY) : params.ctx.lineTo(2*event.pageX, 2*event.pageY)
+
+                let posXY = current_game == "zombsroyale" ? {x:event.pageX/1.42857, y:event.pageY/1.42857} : {x:event.pageX, y:event.pageY}
+
+                os_var == "win" ? params.ctx.lineTo(posXY.x, posXY.y) : os_var == "mac" ? params.ctx.lineTo(2*posXY.x, 2*posXY.y) : params.ctx.lineTo(posXY.x, posXY.y)
                 params.ctx.stroke();
             })
         }
@@ -667,6 +699,19 @@ font-size: 0.6em;
             this.checked = selectedClass
         })
         $(".checkbox_del_cur:checked").length ? $(".del_cur").fadeIn('slow').css("display","inline-block").text(`Удалить [${$(".checkbox_del_cur:checked").length}]`):$(".del_cur").fadeOut('slow')
+    }
+
+    // zombsroyale.io
+    function checkCursorStartup(){
+        if(debug) console.log("Game state:",game.currentGameState)
+        //if(document.getElementsByTagName("canvas")[0].style.cursor.indexOf("data:image/cur") != -1){
+        let states = ["MainMenu","Dead","loading","UiLoadingOverlay","UiGameOver","UiSpectator","VideoAd"]
+        if(game.currentGameState && states.indexOf(game.currentGameState)<0){
+            $("#linebetas").show()
+            // $(".zomb_btn-red").show()
+        } else {
+            $("#linebetas").hide()
+        }
     }
 
     function makeMenuButton(firststart = false){
@@ -685,7 +730,7 @@ font-size: 0.6em;
                 $(".mPanel_cur").fadeToggle('slow')
             })
             $openSelectCur.insertAfter(".canvas-loading")
-            setTimeout(checkCursorStartup, 1000);
+            setInterval(checkCursorStartup, 1000);
         } else {
             // surviv.io
             $openSelectCur = $('<a class="btn-green btn-darken menu-option">'+selLang.selectScope+'</a>')
@@ -827,15 +872,6 @@ font-size: 0.6em;
 
         $mPanel.append($cur_overlay);
         $("body").append($mPanel)
-    }
-
-    // zombsroyale.io
-    function checkCursorStartup(){
-        if(document.getElementsByTagName("canvas")[0].style.cursor.indexOf("data:image/cur") != -1){
-            $(".zomb_btn-red").show()
-        } else {
-            setTimeout(checkCursorStartup, 1000);
-        }
     }
 
     function updatePanel(firststart = false){
