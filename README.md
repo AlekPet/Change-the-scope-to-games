@@ -1,8 +1,15 @@
-# Change the scope to surviv.io / Изменить прицел в surviv.io
+# Change the scope to surviv.io and zombsroyale.io games / Изменить прицел в играх surviv.io и zombsroyale.io
+
+## Games support / Поддерживаемые игры
+> surviv.io<br>
+> zombsroyale.io
+
 >Пользовательский скрипт, позволяющий изменить прицел в игре<br>
->Скрипт также позволяет добавлять свои прицелы.
+>Скрипт также позволяет добавлять свои прицелы.<br>
+>Менять их цвет и размер
 
 >User script that allows you to change the sight in the game.<br>
 >The script also allows you to add your own sights.<br>
+>Change color and size
 
 <b>Author:</b> AlekPet
