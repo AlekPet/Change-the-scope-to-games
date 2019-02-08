@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name  Change the scope to surviv.io
-// @name:ru  Изменить прицел в surviv.io
+// @name  Change the scope to surviv.io and zombsroyale.io
+// @name:ru  Изменить прицел в surviv.io и zombsroyale.io
 // @namespace    https://github.com/AlekPet/
 // @version      0.0.8
 // @description  Сhange the scope in the game surviv.io, and zombsroyale.io
