@@ -2,7 +2,7 @@
 // @name  Change the scope to surviv.io and zombsroyale.io
 // @name:ru  Изменить прицел в surviv.io и zombsroyale.io
 // @namespace    https://github.com/AlekPet/
-// @version      0.0.8
+// @version      0.0.8.1
 // @description  Сhange the scope in the game surviv.io, and zombsroyale.io
 // @description:ru  Изменяет прицел в игре surviv.io и zombsroyale.io
 // @copyright    2018, AlekPet (https://github.com/AlekPet)
@@ -705,7 +705,7 @@ font-size: 0.6em;
     function checkCursorStartup(){
         if(debug) console.log("Game state:",game.currentGameState)
         //if(document.getElementsByTagName("canvas")[0].style.cursor.indexOf("data:image/cur") != -1){
-        let states = ["MainMenu","Dead","loading","UiLoadingOverlay","UiGameOver","UiSpectator","VideoAd"]
+        let states = ["MainMenu","Dead","loading","UiLoadingOverlay","UiGameOver","UiSpectator","UiPatchNotesOverlay","VideoAd"]
         if(game.currentGameState && states.indexOf(game.currentGameState)<0){
             $("#linebetas").show()
             // $(".zomb_btn-red").show()
