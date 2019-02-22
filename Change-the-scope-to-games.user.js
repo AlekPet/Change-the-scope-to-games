@@ -2,7 +2,7 @@
 // @name  Change the scope to surviv.io and zombsroyale.io
 // @name:ru  Изменить прицел в surviv.io и zombsroyale.io
 // @namespace    https://github.com/AlekPet/
-// @version      0.0.8.1
+// @version      0.0.8.2
 // @description  Сhange the scope in the game surviv.io, and zombsroyale.io
 // @description:ru  Изменяет прицел в игре surviv.io и zombsroyale.io
 // @copyright    2018, AlekPet (https://github.com/AlekPet)
@@ -13,15 +13,15 @@
 // @match        *://2dbattleroyale.com/*
 // @match        *://zombsroyale.io/*
 // @icon         http://surviv.io/img/icon_app.png
-// @updateURL    https://raw.githubusercontent.com/AlekPet/Change-the-scope-to-surviv.io/master/Change-the-scope-to-games.user.js
-// @downloadURL  https://raw.githubusercontent.com/AlekPet/Change-the-scope-to-surviv.io/master/Change-the-scope-to-games.user.js
+// @updateURL    https://raw.githubusercontent.com/AlekPet/Change-the-scope-to-games/master/Change-the-scope-to-games.user.js
+// @downloadURL  https://raw.githubusercontent.com/AlekPet/Change-the-scope-to-games/master/Change-the-scope-to-games.user.js
 // @run-at document-end
 // @grant GM_setValue
 // @grant GM_getValue
 // @grant GM_addStyle
 // @grant GM_getResourceText
 // @require https://code.jquery.com/jquery-3.1.0.min.js
-// @resource scopes https://github.com/AlekPet/Change-the-scope-to-surviv.io/raw/master/assets/json/scopes.json
+// @resource scopes https://raw.githubusercontent.com/AlekPet/Change-the-scope-to-games/master/assets/json/scopes.json
 // ==/UserScript==
 
 GM_addStyle(`
@@ -490,7 +490,16 @@ font-size: 0.6em;
     var ObjSaveCursors = null, language = 'en-US',
         selLang = lang.en,
 
-        current_game = location.href.includes("zombsroyale.io")?"zombsroyale":"surviv"
+        current_game = location.href.includes("zombsroyale.io")?"zombsroyale":"surviv",
+
+        game_support = {
+            "surviv":{
+                laser : true
+            },
+            "zombsroyale":{
+                laser : false // not correct work!
+            }
+        }
 
     language = window.navigator.userLanguage || window.navigator.language
 
@@ -545,7 +554,7 @@ font-size: 0.6em;
         }
 
     function setGameCursor(urlCur){
-        if(location.href.includes("zombsroyale.io")){
+        if(current_game == "zombsroyale"){
             // zombsroyale.io
             let x = document.getElementById("#canvas"),
                 las = document.getElementById("linebetas")
@@ -705,8 +714,8 @@ font-size: 0.6em;
     function checkCursorStartup(){
         if(debug) console.log("Game state:",game.currentGameState)
         //if(document.getElementsByTagName("canvas")[0].style.cursor.indexOf("data:image/cur") != -1){
-        let states = ["MainMenu","Dead","loading","UiLoadingOverlay","UiGameOver","UiSpectator","UiPatchNotesOverlay","VideoAd"]
-        if(game.currentGameState && states.indexOf(game.currentGameState)<0){
+        let states = ["MainMenu","Dead","loading","UiLoadingOverlay","UiGameOver","UiSpectator","UiPatchNotesOverlay","UiLoginOverlay","UiSettingsOverlay","UiConfirmOverlay","UiMapOverlay","UiSeasonOverlay","UiChallengesOverlay","UiLeaveOverlay","VideoAd","Profile","Cosmetics","Shop","Friends","Leaderboards"]
+        if(game_support[current_game].laser && game.currentGameState && states.indexOf(game.currentGameState)<0){
             $("#linebetas").show()
             // $(".zomb_btn-red").show()
         } else {
@@ -717,7 +726,7 @@ font-size: 0.6em;
     function makeMenuButton(firststart = false){
         let $openSelectCur = null
 
-        if(location.href.includes("zombsroyale.io")){
+        if(current_game == "zombsroyale"){
             // zombsroyale.io
             $openSelectCur = $('<a class="zomb_btn-red zomb_btn-darken zomb_menu-option">'+selLang.selectScope+'</a>').click(function(){
                 if(firststart && ObjSaveCursors.options.firstRun) {
@@ -778,7 +787,7 @@ font-size: 0.6em;
                         "<div class='optionFiels'><a href='javascript:void(0)' title='"+selLang.selectAll+"' id='selectAlltScopes' style='color: cyan !important;font-size: 0.6em;text-decoration: none;'>"+selLang.selectAll+"</a></div>"+
                         "<div class='optionFiels'><a href='javascript:void(0)' title='"+selLang.resetDefault+"' id='resetDefaultScopes' style='color: cyan !important;font-size: 0.6em;text-decoration: none;'>"+selLang.resetDefault+"</a></div>"+
                         "<div class='optionFiels font_7'>"+selLang.buttonInGame+": <input type='checkbox'"+(ObjSaveCursors.options.buttonShow?"checked":"")+" title='"+selLang.buttonInGameInfo+"' id='buttin_scope_in_game'></div>"+
-                        "<div class='optionFiels'>"+selLang.laser+": <input type='checkbox' title='"+selLang.laser+"' id='LineLaser' "+(ObjSaveCursors.options.laserSetting.enabled?"checked":"")+ "></div>"+
+                        "<div class='optionFiels'>"+selLang.laser+": <input type='checkbox' title='"+selLang.laser+"' id='LineLaser' "+(game_support[current_game].laser && ObjSaveCursors.options.laserSetting.enabled?"checked":"")+ "></div>"+
                         "<div class='optionFiels' style='margin-top: 20%;'><div class='font_8'>"+selLang.changeColor+"</div>"+
                         "<div class='colorRange'>"+
                         "<div class='canvasColor'><div><canvas id='canvasChangeColor' style='width:auto;height:auto;'></canvas></div></div>"+
@@ -817,33 +826,37 @@ font-size: 0.6em;
                 }
             }),
             $LineLaser = $($mPanel).find("#LineLaser").change(function(){
+                if(game_support[current_game].laser){
+                    if(this.checked){
+                        let laserSetting = ObjSaveCursors.options.laserSetting,
+                            ls_color = laserSetting.color || "red",
+                            ls_width = laserSetting.width || "2",
+                            ls_dotted_lines = laserSetting.dotted.lines || "5,15",
 
-                if(this.checked){
-                    let laserSetting = ObjSaveCursors.options.laserSetting,
-                        ls_color = laserSetting.color || "red",
-                        ls_width = laserSetting.width || "2",
-                        ls_dotted_lines = laserSetting.dotted.lines || "5,15",
+                            color = prompt(selLang.laserColor, ls_color),
+                            widthLine = prompt(selLang.laserWidth, ls_width),
+                            dotted_enabled = false,
+                            dotted = (dotted_enabled = confirm(selLang.laserDottedOn)) ? prompt(selLang.laserParmDotted, ls_dotted_lines) : null
 
-                        color = prompt(selLang.laserColor, ls_color),
-                        widthLine = prompt(selLang.laserWidth, ls_width),
-                        dotted_enabled = false,
-                        dotted = (dotted_enabled = confirm(selLang.laserDottedOn)) ? prompt(selLang.laserParmDotted, ls_dotted_lines) : null
-
-                    // Save setting
-                    if(confirm(selLang.laserSaveSetting)){
-                        if(ObjSaveCursors.hasOwnProperty("options") && ObjSaveCursors.options.hasOwnProperty("laserSetting")){
-                            ObjSaveCursors.options.laserSetting = {enabled:this.checked, color:color, width: widthLine, dotted: {enabled: dotted_enabled, lines:dotted}}
-                            saveToStorage();
+                        // Save setting
+                        if(confirm(selLang.laserSaveSetting)){
+                            if(ObjSaveCursors.hasOwnProperty("options") && ObjSaveCursors.options.hasOwnProperty("laserSetting")){
+                                ObjSaveCursors.options.laserSetting = {enabled:this.checked, color:color, width: widthLine, dotted: {enabled: dotted_enabled, lines:dotted}}
+                                saveToStorage();
+                            }
                         }
+
+                        if(dotted != null) dotted = dotted.split(',')
+
+                        betaLine(color,widthLine,dotted)
+                    } else {
+                        ObjSaveCursors.options.laserSetting.enabled = this.checked
+                        saveToStorage();
+                        $("#linebetas").remove()
                     }
-
-                    if(dotted != null) dotted = dotted.split(',')
-
-                    betaLine(color,widthLine,dotted)
                 } else {
-                    ObjSaveCursors.options.laserSetting.enabled = this.checked
-                    saveToStorage();
-                    $("#linebetas").remove()
+                   this.checked = false
+                    alert("Laser for zombsroyale is being finalized...")
                 }
             }),
             $selectAll = $($mPanel).find("#selectAlltScopes").click(function(){
@@ -859,15 +872,19 @@ font-size: 0.6em;
             })
 
         if($LineLaser.is(":checked")){
-            let laserSetting = ObjSaveCursors.options.laserSetting,
-                ls_color = laserSetting.color || "red",
-                ls_width = laserSetting.width || "2",
-                ls_dotted_enabled = laserSetting.dotted.enabled || false,
-                ls_dotted_lines = laserSetting.dotted.lines || "5,15"
+            if(game_support[current_game].laser){
+                let laserSetting = ObjSaveCursors.options.laserSetting,
+                    ls_color = laserSetting.color || "red",
+                    ls_width = laserSetting.width || "2",
+                    ls_dotted_enabled = laserSetting.dotted.enabled || false,
+                    ls_dotted_lines = laserSetting.dotted.lines || "5,15"
 
-            ls_dotted_lines =(ls_dotted_enabled && ls_dotted_lines != null)?ls_dotted_lines.split(','):null
+                ls_dotted_lines =(ls_dotted_enabled && ls_dotted_lines != null)?ls_dotted_lines.split(','):null
 
-            betaLine(ls_color,ls_width,ls_dotted_lines)
+                betaLine(ls_color,ls_width,ls_dotted_lines)
+            } else {
+                $LineLaser.checked = false
+            }
         }
 
         $mPanel.append($cur_overlay);
@@ -1289,6 +1306,7 @@ font-size: 0.6em;
             firststart = true
             if(debug) console.log("Первый запуск!", firststart)
         }
+        console.log("Current game: ", current_game, "Laser support:", game_support[current_game].laser)
         makeMenuButton(firststart)
         makePanel()
         updatePanel(firststart)
