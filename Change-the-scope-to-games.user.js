@@ -2,7 +2,7 @@
 // @name  Change the scope to surviv.io and zombsroyale.io
 // @name:ru  Изменить прицел в surviv.io и zombsroyale.io
 // @namespace    https://github.com/AlekPet/
-// @version      0.0.8.2
+// @version      0.0.8.3
 // @description  Сhange the scope in the game surviv.io, and zombsroyale.io
 // @description:ru  Изменяет прицел в игре surviv.io и zombsroyale.io
 // @copyright    2018, AlekPet (https://github.com/AlekPet)
@@ -678,24 +678,81 @@ font-size: 0.6em;
         return null
     }
 
+    var mouse_pos = {x:0, y:0}, ticker_frame
+    $(document).mousemove(function(event){
+        mouse_pos = {x:event.pageX, y:event.pageY}
+    })
+
+    function laserUpdate(params, color, widthLine, dotted){
+        let w = params.canvas.width,
+            h = params.canvas.height
+        $(params.canvas).attr({'width': params.cvs.width, 'height': params.cvs.height})
+        params.ctx.beginPath()
+        if(dotted != null) params.ctx.setLineDash(dotted);
+        params.ctx.strokeStyle=color
+        params.ctx.lineWidth=widthLine
+        params.ctx.moveTo(w/2,h/2)
+
+        let posXY = current_game == "zombsroyale" ? {x:mouse_pos.x/1.42857, y:mouse_pos.y/1.42857} : {x:mouse_pos.x, y:mouse_pos.y}
+
+        os_var == "win" ? params.ctx.lineTo(posXY.x, posXY.y) : os_var == "mac" ? params.ctx.lineTo(2*posXY.x, 2*posXY.y) : params.ctx.lineTo(posXY.x, posXY.y)
+        params.ctx.stroke();
+
+        // Engine not PIXI JS
+        if(current_game != 'surviv' && ticker_frame.work) {
+            ticker_frame(function(){
+                laserUpdate(params, color, widthLine, dotted)
+            });
+        }
+    }
+
+    function stop_ticker(){
+        if(debug) console.log("Timer stop!", "Ticker:", ticker_frame, "Laser support:", game_support[current_game].laser)
+        if(ticker_frame && game_support[current_game].laser){
+
+            if(current_game == 'surviv'){
+                ticker_frame.stop();
+            } else {
+                const cancel_ticket = window.cancelAnimationFrame || window.mozCancelAnimationFrame
+                ticker_frame.work = false
+                cancel_ticket(ticker_frame)
+            }
+        }
+    }
+
     function betaLine(color = "red", widthLine = 2, dotted = null){
         let params = makeCnavas()
         if(params){
-            $(document).mousemove(function(event){
-                let w = params.canvas.width,
-                    h = params.canvas.height
-                $(params.canvas).attr({'width': params.cvs.width, 'height': params.cvs.height})
-                params.ctx.beginPath()
-                if(dotted != null) params.ctx.setLineDash(dotted);
-                params.ctx.strokeStyle=color
-                params.ctx.lineWidth=widthLine
-                params.ctx.moveTo(w/2,h/2)
+            if(current_game == 'surviv'){ // surviv PIXI JS
+                ticker_frame = new PIXI.ticker.Ticker();
+                ticker_frame.stop();
+                ticker_frame.add(function(deltaTime){
+                    laserUpdate(params, color, widthLine, dotted)
+                });
+                ticker_frame.start();
+            } else { // zombsroyale Unity
+                ticker_frame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+                ticker_frame.work = true;
+                ticker_frame(function(){
+                    laserUpdate(params, color, widthLine, dotted)
+                });
+                /* Old version update mouse move
+                $(document).mousemove(function(event){
+                    let w = params.canvas.width,
+                        h = params.canvas.height
+                    $(params.canvas).attr({'width': params.cvs.width, 'height': params.cvs.height})
+                    params.ctx.beginPath()
+                    if(dotted != null) params.ctx.setLineDash(dotted);
+                    params.ctx.strokeStyle=color
+                    params.ctx.lineWidth=widthLine
+                    params.ctx.moveTo(w/2,h/2)
 
-                let posXY = current_game == "zombsroyale" ? {x:event.pageX/1.42857, y:event.pageY/1.42857} : {x:event.pageX, y:event.pageY}
+                    let posXY = current_game == "zombsroyale" ? {x:event.pageX/1.42857, y:event.pageY/1.42857} : {x:event.pageX, y:event.pageY}
 
-                os_var == "win" ? params.ctx.lineTo(posXY.x, posXY.y) : os_var == "mac" ? params.ctx.lineTo(2*posXY.x, 2*posXY.y) : params.ctx.lineTo(posXY.x, posXY.y)
-                params.ctx.stroke();
-            })
+                    os_var == "win" ? params.ctx.lineTo(posXY.x, posXY.y) : os_var == "mac" ? params.ctx.lineTo(2*posXY.x, 2*posXY.y) : params.ctx.lineTo(posXY.x, posXY.y)
+                    params.ctx.stroke();
+                })*/
+            }
         }
     }
 
@@ -758,7 +815,7 @@ font-size: 0.6em;
 
                 $(".mPanel_cur").fadeToggle('slow')
             })
-            $openSelectCur.insertAfter("#btn-start-solo")
+            $openSelectCur.insertAfter("#btn-start-mode-0")
             $("#game-area-wrapper").append($openSelectCur.clone(true).css({
                 "font-size": "0.7em",
                 "position": "fixed",
@@ -852,10 +909,11 @@ font-size: 0.6em;
                     } else {
                         ObjSaveCursors.options.laserSetting.enabled = this.checked
                         saveToStorage();
+                        stop_ticker();
                         $("#linebetas").remove()
                     }
                 } else {
-                   this.checked = false
+                    this.checked = false
                     alert("Laser for zombsroyale is being finalized...")
                 }
             }),
