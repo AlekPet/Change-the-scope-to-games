@@ -2,7 +2,7 @@
 // @name  Change the scope to surviv.io and zombsroyale.io
 // @name:ru  Изменить прицел в surviv.io и zombsroyale.io
 // @namespace    https://github.com/AlekPet/
-// @version      0.0.8.3
+// @version      0.0.8.3.1
 // @description  Сhange the scope in the game surviv.io, and zombsroyale.io
 // @description:ru  Изменяет прицел в игре surviv.io и zombsroyale.io
 // @copyright    2018, AlekPet (https://github.com/AlekPet)
@@ -410,6 +410,7 @@ font-size: 0.6em;
                   buttonInGameInfo: "Показывать кнопку \"Выбрать прицел\" в игре",
                   laserSaveSetting:"Сохранить настройки лазера?",
                   laser: "Лазер",
+                  paletteColor: "Палитра цветов:",
                   changeColor: "Изменить цвет/размер",
                   applyColor: "Применить",
                   applyColorHint: "Применить выбранный цвет и размер",
@@ -464,6 +465,7 @@ font-size: 0.6em;
                   buttonInGameInfo: "Show the \"Select Sight\" button in the game",
                   laserSaveSetting: "Save laser settings?",
                   laser: "Laser",
+                  paletteColor: "Color palette:",
                   changeColor: "Change color/size",
                   applyColor: "Apply",
                   applyColorHint: "Apply selected color and size",
@@ -505,6 +507,64 @@ font-size: 0.6em;
 
     if(language.includes("ru")) selLang = lang.ru
     if(debug) console.log("Язык:", language, selLang)
+
+    // Functions
+function backdec(c) {
+  var rgbal = [],
+  dd = c,
+  fou = "";
+
+  if (dd.length == 7) {
+    for (var i = 0; i < 3; i++) {
+      var fl = [];
+      switch (i) {
+        case 0:
+          fou = dd.slice(1, 3);
+          break;
+        case 1:
+          fou = dd.slice(3, 5);
+          break;
+        case 2:
+          fou = dd.slice(5, 7);
+          break;
+      }
+      fou = fou.toLowerCase()
+      let ris = "";
+      for (var u = 0; u < 2; u++) {
+        var gi = fou.charAt(u)
+        if (gi.search(/[a-f]/ig) != -1) {
+          switch (gi) {
+            case "a":
+              ris = 10;
+              break;
+            case "b":
+              ris = 11;
+              break;
+            case "c":
+              ris = 12;
+              break;
+            case "d":
+              ris = 13;
+              break;
+            case "e":
+              ris = 14;
+              break;
+            case "f":
+              ris = 15;
+              break;
+          }
+        } else {
+          ris = gi
+        }
+        fl.push(ris)
+      }
+      let f = (fl[0] * Math.pow(16, 1)) + (fl[1] * Math.pow(16, 0))
+      rgbal.push(f)
+    }
+  }
+  return rgbal
+}
+    // Functions end
 
     function loadStorage(){
         let ObjSaveCursors_tmp = GM_getValue('ObjSaveCursors');
@@ -815,7 +875,8 @@ font-size: 0.6em;
 
                 $(".mPanel_cur").fadeToggle('slow')
             })
-            $openSelectCur.insertAfter("#btn-start-mode-0")
+            //$openSelectCur.insertAfter("#btn-start-mode-0")
+            $openSelectCur.insertAfter(".btn-battle-container")
             $("#game-area-wrapper").append($openSelectCur.clone(true).css({
                 "font-size": "0.7em",
                 "position": "fixed",
@@ -848,6 +909,7 @@ font-size: 0.6em;
                         "<div class='optionFiels' style='margin-top: 20%;'><div class='font_8'>"+selLang.changeColor+"</div>"+
                         "<div class='colorRange'>"+
                         "<div class='canvasColor'><div><canvas id='canvasChangeColor' style='width:auto;height:auto;'></canvas></div></div>"+
+                        "<div style='padding:2px;'>"+selLang.paletteColor+" <input style='border: 0;background: #ffffff00;' type='color' value='' id='colorInput'></div>"+
                         "<span style='color:red;'>"+selLang.input_colors[0].charAt(0)+"</span>:<input type='range' max='255' min='0' class='rangeColors' style='width: 100px;' value='0' title='"+selLang.input_colors[0]+"'><br>"+
                         "<span style='color:green;'>"+selLang.input_colors[1].charAt(0)+"</span>:<input type='range' max='255' min='0' class='rangeColors' style='width: 100px;' value='0' title='"+selLang.input_colors[1]+"'><br>"+
                         "<span style='color:blue;'>"+selLang.input_colors[2].charAt(0)+"</span>:<input type='range' max='255' min='0' class='rangeColors' style='width: 100px;' value='0' title='"+selLang.input_colors[2]+"'><br>"+
@@ -917,6 +979,48 @@ font-size: 0.6em;
                     alert("Laser for zombsroyale is being finalized...")
                 }
             }),
+            // All events click scope delegate
+            ListBox = $($mPanel).find(".mPanel_cur_list_box > ul").click(function(event){
+                var target = event.target,
+                    elem = target
+
+                while(elem !== this){
+
+                    let datas = $(elem).data("el_val") ? $(elem).data("el_val") : null
+
+                    // Change scope
+                    if(elem.className.includes("element_cur_cont")){
+                        if(elem.title === "Default"){
+                            checkActive(null)
+                            setCursor("crosshair")
+                        } else {
+                            let imgInside = $(elem).find("img").get(0)
+                            checkActive(datas)
+                            setCursor(datas, imgInside)
+                        }
+                        $(".list_cur > li.acive_cursor").removeClass("acive_cursor")
+                        $(elem).addClass("acive_cursor")
+                        saveToStorage()
+                        break;
+                    }
+
+                    // Change color scope
+                    if(elem.className.includes("colorchange_cur")){
+                        event.stopPropagation();
+                        changeColor(datas)
+                        break;
+                    }
+
+                    // Edit scope
+                    if(elem.className.includes("checkbox_edit_cur")){
+                        event.stopPropagation();
+                        makeFormAddCursor(false, datas)
+                        break;
+                    }
+
+                    elem = elem.parentNode
+                }
+            }),
             $selectAll = $($mPanel).find("#selectAlltScopes").click(function(){
                 $(this).toggleClass("selectedall")
                 selectAllScopes.call(this);
@@ -953,13 +1057,7 @@ font-size: 0.6em;
         let ListBox = $(".mPanel_cur_list_box > ul").empty(),
             activeTrue = false,
 
-            divDef = $("<li class='element_cur_cont'>").attr('title',"Default").click(function(){
-                $(".list_cur > li.acive_cursor").removeClass("acive_cursor")
-                $(this).addClass("acive_cursor")
-                checkActive(null)
-                setCursor("crosshair")
-                saveToStorage()
-            }),
+            divDef = $("<li class='element_cur_cont'>").attr('title',"Default"),
             divDefTitle = $("<span class='element_cur_title'>").text("Default"),
             divDefImg = $("<img width='48'>").attr("src", defaultCursorImage),
             divDefImgBox = $("<div class='element_cur_title'>").append(divDefImg)
@@ -969,14 +1067,7 @@ font-size: 0.6em;
 
         $.each(ObjSaveCursors.cursorList, function(index, el){
             let self = el,
-                divCont = $("<li class='element_cur_cont'>").attr('title',selLang.selectCrosshair+self.name).click(function(){
-                    let imgInside = $(this).find("img").get(0)
-                    $(".list_cur > li.acive_cursor").removeClass("acive_cursor")
-                    $(this).addClass("acive_cursor")
-                    checkActive(self)
-                    setCursor(self, imgInside)
-                    saveToStorage()
-                }),
+                divCont = $("<li class='element_cur_cont'>").attr('title',selLang.selectCrosshair+self.name).data("el_val", self),
                 divTitle = $("<span class='element_cur_title'>").text(self.name.length>15?self.name.substr(0,12)+"...":self.name),
                 divImg = $("<img width='48'>").one('load',function(){
                     $(this).css("cursor","url("+this.src+")"+this.naturalWidth/2+" "+this.naturalHeight/2+", default")
@@ -985,17 +1076,10 @@ font-size: 0.6em;
                 delCheck = $("<input class='checkbox_del_cur' type='checkbox' title='Удаление'>").click(function(event){
                     event.stopPropagation();
                 }),
-                editButton = $("<input type='button' class='checkbox_edit_cur' value='"+selLang.editCrosshair+"' title='"+selLang.editCrosshair+"'>").click(function(event){
-                    event.stopPropagation();
-                    makeFormAddCursor(false, {element: self, index: index})
-                })
+                editButton = $("<input type='button' class='checkbox_edit_cur' value='"+selLang.editCrosshair+"' title='"+selLang.editCrosshair+"'>").data("el_val", {element: self, index: index})
 
             if(/^data:image/i.test(self.cururl)){
-                let colorChange = $("<div class='colorchange_cur' title='"+selLang.changeColor+"'>").click(function(event){
-                    event.stopPropagation();
-                    changeColor({element: self, img: divImg, index: index})
-                })
-
+                let colorChange = $("<div class='colorchange_cur' title='"+selLang.changeColor+"'>").data("el_val", {element: self, img: divImg, index: index})
                 divCont.append($("<p style='margin: 0;padding: 0;border-bottom: 1px dotted silver;'>").append(colorChange,editButton,delCheck),divImgBox,divTitle)
             } else {
                 divCont.append($("<p style='margin: 0;padding: 0;border-bottom: 1px dotted silver;'>").append(editButton,delCheck),divImgBox,divTitle)
@@ -1346,6 +1430,15 @@ font-size: 0.6em;
             for (let i = 0; i < eli.length; i++) {
                 eli[i].addEventListener("input", setColorsScope)
             }
+
+            let boxcolor = document.getElementById("colorInput").addEventListener("input", function(){
+                let curColor = this.value,
+                    digitColor = backdec(curColor)
+                eli[0].value = digitColor[0]
+                eli[1].value = digitColor[1]
+                eli[2].value = digitColor[2]
+                setColorsScope()
+            })
 
             // Size
             $("#rangeSize").on("input", function(){
