@@ -2,7 +2,7 @@
 // @name  Change the scope to surviv.io and zombsroyale.io
 // @name:ru  Изменить прицел в surviv.io и zombsroyale.io
 // @namespace    https://github.com/AlekPet/
-// @version      0.0.8.3.1
+// @version      0.0.8.3.2
 // @description  Сhange the scope in the game surviv.io, and zombsroyale.io
 // @description:ru  Изменяет прицел в игре surviv.io и zombsroyale.io
 // @copyright    2018, AlekPet (https://github.com/AlekPet)
@@ -563,6 +563,30 @@ function backdec(c) {
     }
   }
   return rgbal
+}
+
+function hex(r=0,g=0,b=0) {
+  let gf = "",
+    hexv = "0123456789ABCDEF",
+    rc = (typeof r == "number" && r<256)?Number(r):0,
+    gc = (typeof g == "number" && r<256)?Number(g):0,
+    bc = (typeof b == "number" && r<256)?Number(b):0,
+    valhex = "",
+    ff = [rc, gc, bc];
+  for (var i = 0; i < 3; i++) {
+    let del = ff[i] % 16,
+      di = Math.floor(ff[i] / 16);
+    if (ff[i] >= 255) {
+      valhex += "FF";
+    } else if (ff[i] <= 0) {
+      valhex += "00";
+    } else {
+      valhex += hexv.charAt(di) + hexv.charAt(del);
+    }
+  }
+  gf = "#" + valhex;
+
+  return gf;
 }
     // Functions end
 
@@ -1339,6 +1363,8 @@ function backdec(c) {
             b = parseInt(eli[2].value),
             a = 255
 
+            document.getElementById("colorInput").value = hex(r,g,b)
+
         for (var i = 0; i < imgData.data.length; i += 4) {
 
             imgData.data[i] = r; //r
@@ -1378,6 +1404,7 @@ function backdec(c) {
                 saveToStorage();
                 updatePanel();
                 new Array().slice.call(document.getElementsByClassName("rangeColors")).forEach(function(el){el.value = 0})
+                document.getElementById("colorInput").value = "#000000";
                 params.img.attr('src',params.element.cururl)
                 changeColor(params)
             }
@@ -1385,10 +1412,11 @@ function backdec(c) {
     }
 
     function changeColor(params = null){
-        let can, ctx,img
+        let can, ctx,img, colorInput
 
         can = document.getElementById("canvasChangeColor")
         ctx = can.getContext("2d")
+        colorInput = document.getElementById("colorInput")
 
         if(params != null && Object.keys(params).length){
 
@@ -1399,9 +1427,11 @@ function backdec(c) {
                 inptuts_colors[0].value = colors.r
                 inptuts_colors[1].value = colors.g
                 inptuts_colors[2].value = colors.b
+                colorInput.value = hex(colors.r,colors.g,colors.b)
                 $("#rangeSize").data("sizeval",colors.size)
             } else {
                 new Array().slice.call(document.getElementsByClassName("rangeColors")).forEach(function(el){el.value = 0})
+                colorInput.value = "#000000";
             }
 
             img = new Image()
@@ -1437,6 +1467,7 @@ function backdec(c) {
                 eli[0].value = digitColor[0]
                 eli[1].value = digitColor[1]
                 eli[2].value = digitColor[2]
+                colorInput.value = hex(digitColor[0],digitColor[1],digitColor[2])
                 setColorsScope()
             })
 
