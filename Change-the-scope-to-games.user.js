@@ -568,9 +568,9 @@ function backdec(c) {
 function hex(r=0,g=0,b=0) {
   let gf = "",
     hexv = "0123456789ABCDEF",
-    rc = (typeof r == "number" && r<256)?Number(r):0,
-    gc = (typeof g == "number" && r<256)?Number(g):0,
-    bc = (typeof b == "number" && r<256)?Number(b):0,
+    rc = (typeof r == "number" && r<256 && r>=0)?Number(r):0,
+    gc = (typeof g == "number" && g<256 && g>=0)?Number(g):0,
+    bc = (typeof b == "number" && b<256 && b>=0)?Number(b):0,
     valhex = "",
     ff = [rc, gc, bc];
   for (var i = 0; i < 3; i++) {
