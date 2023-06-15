@@ -1,18 +1,19 @@
 // ==UserScript==
-// @name  Change the scope to surviv.io and zombsroyale.io
-// @name:ru  Изменить прицел в surviv.io и zombsroyale.io
+// @name  Change the scope to suroi.io (surviv.io) and zombsroyale.io
+// @name:ru  Изменить прицел в suroi.io (surviv.io) и zombsroyale.io
 // @namespace    https://github.com/AlekPet/
-// @version      0.0.8.3.2
-// @description  Сhange the scope in the game surviv.io, and zombsroyale.io
-// @description:ru  Изменяет прицел в игре surviv.io и zombsroyale.io
+// @version      0.0.8.3.3
+// @description  Сhange the scope in the game suroi.io (surviv.io), and zombsroyale.io
+// @description:ru  Изменяет прицел в игре suroi.io (surviv.io) и zombsroyale.io
 // @copyright    2018, AlekPet (https://github.com/AlekPet)
 // @author       AlekPet
 // @license      MIT; https://opensource.org/licenses/MIT
 // @match        *://surviv.io/*
 // @match        *://surviv2.io/*
+// @match        *://suroi.io/*
 // @match        *://2dbattleroyale.com/*
 // @match        *://zombsroyale.io/*
-// @icon         http://surviv.io/img/icon_app.png
+// @icon         data:image/jpeg;base64,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
 // @updateURL    https://raw.githubusercontent.com/AlekPet/Change-the-scope-to-games/master/Change-the-scope-to-games.user.js
 // @downloadURL  https://raw.githubusercontent.com/AlekPet/Change-the-scope-to-games/master/Change-the-scope-to-games.user.js
 // @run-at document-end
@@ -646,7 +647,8 @@ function hex(r=0,g=0,b=0) {
             $(las).css({cursor:urlCur,transform:"scale(1.42857) !important",position:"absolute",top:0,left:0})
         } else {
             // surviv.io
-            $("#game-area-wrapper").css({'cursor': urlCur})
+            let surv_config = detectSurviv()
+            $(surv_config.containerGame).css({'cursor': urlCur})
             $(".zomb_menu-option").show()
         }
     }
@@ -717,10 +719,10 @@ function hex(r=0,g=0,b=0) {
         }
     }
 
-    function makeCnavas(){
+    function makeCnavas(canv){
         if(current_game == "surviv"){
             let $canvas = $("#linebetas"),
-                $cvs = $("#cvs"),
+                $cvs = $(canv),
                 ctx
             if($canvas.length == 0){
                 $canvas = $('<canvas>').
@@ -731,9 +733,11 @@ function hex(r=0,g=0,b=0) {
                 })
                     .attr({
                     id:'linebetas',
-                    width: 1920,
-                    height: 531
+                    width: parseInt($cvs.attr('width'),10),
+                    height: parseInt($cvs.attr('height'),10)
                 })
+
+                $canvas.click(null)
                 $canvas.insertAfter($cvs)
             }
             if($canvas.get(0).getContext('2d')){
@@ -782,6 +786,13 @@ function hex(r=0,g=0,b=0) {
         os_var == "win" ? params.ctx.lineTo(posXY.x, posXY.y) : os_var == "mac" ? params.ctx.lineTo(2*posXY.x, 2*posXY.y) : params.ctx.lineTo(posXY.x, posXY.y)
         params.ctx.stroke();
 
+        let surv_conf = detectSurviv()
+        if(current_game == 'surviv' && surv_conf.game=='suroi.io' && ticker_frame.work) {
+            ticker_frame(function(){
+                laserUpdate(params, color, widthLine, dotted)
+            });
+        }
+
         // Engine not PIXI JS
         if(current_game != 'surviv' && ticker_frame.work) {
             ticker_frame(function(){
@@ -805,16 +816,19 @@ function hex(r=0,g=0,b=0) {
     }
 
     function betaLine(color = "red", widthLine = 2, dotted = null){
-        let params = makeCnavas()
+        let surv_config = detectSurviv(),
+            params = makeCnavas(surv_config.canvas_game)
+        if(surv_config.game=='suroi.io') params.canvas.style.zIndex = 1
+
         if(params){
-            if(current_game == 'surviv'){ // surviv PIXI JS
+            if(current_game == 'surviv' && surv_config.game == 'surviv.io'){ // surviv PIXI JS
                 ticker_frame = new PIXI.ticker.Ticker();
                 ticker_frame.stop();
                 ticker_frame.add(function(deltaTime){
                     laserUpdate(params, color, widthLine, dotted)
                 });
                 ticker_frame.start();
-            } else { // zombsroyale Unity
+            } else { // zombsroyale Unity and suroi.io
                 ticker_frame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
                 ticker_frame.work = true;
                 ticker_frame(function(){
@@ -864,6 +878,59 @@ function hex(r=0,g=0,b=0) {
         }
     }
 
+    function detectSurviv(){
+        const default_surviv = {
+            containerGame: "#game-area-wrapper",
+            containerMenu: ".btn-battle-container",
+            game: "surviv.io",
+            canvas_game: "#cvs",
+            buttonStyleGame: {
+                "font-size": "0.7em",
+                "position": "fixed",
+                "top": "0",
+                "left": "5px",
+                "width": "80px",
+                "height": "20px",
+                "line-height": "1.5",
+                "opacity": "0.7",
+                "z-index": "5",
+                "display": ObjSaveCursors.options.buttonShow ? "block" : "none"
+            }}
+
+        let surviv_conf = default_surviv
+
+         if(location.host == 'suroi.io'){
+                Object.assign(surviv_conf, {
+                containerGame: "#game-ui",
+                containerMenu:"#splash-ui",
+                game: "suroi.io",
+                canvas_game: 'canvas:not(#canvasChangeColor)',
+                buttonStyleGame: {
+                "font-size": "0.7em",
+                "position": "fixed",
+                "top": "0",
+                "left": "0",
+                "height": "20px",
+                "line-height": "1.5",
+                "opacity": "0.7",
+                "z-index": "5",
+                "padding:": "2px",
+                "text-decoration": "none",
+                "color":"white",
+                "margin-top": "0",
+                "cursor":"pointer",
+                "display": ObjSaveCursors.options.buttonShow ? "block" : "none"
+            }})
+            }
+        return surviv_conf
+    }
+
+    function setZindex(){
+        ["#splash-ui","#game-ui","#settings-menu"].forEach((selector, indx)=>{
+            $(selector).css("z-index", indx+2)
+        })
+    }
+
     function makeMenuButton(firststart = false){
         let $openSelectCur = null
 
@@ -883,11 +950,14 @@ function hex(r=0,g=0,b=0) {
             setInterval(checkCursorStartup, 1000);
         } else {
             // surviv.io
+            let surv_config = detectSurviv()
+
             $openSelectCur = $('<a class="btn-green btn-darken menu-option">'+selLang.selectScope+'</a>')
                 .css({
                 "background": "#af5050",
                 "border-bottom": "2px solid #7a3838",
-                "box-shadow": "inset 0 -2px #7a3838"
+                "box-shadow": "inset 0 -2px #7a3838",
+                "margin-top": "15px"
             })
                 .click(function(){
                 if(firststart && ObjSaveCursors.options.firstRun) {
@@ -900,19 +970,13 @@ function hex(r=0,g=0,b=0) {
                 $(".mPanel_cur").fadeToggle('slow')
             })
             //$openSelectCur.insertAfter("#btn-start-mode-0")
-            $openSelectCur.insertAfter(".btn-battle-container")
-            $("#game-area-wrapper").append($openSelectCur.clone(true).css({
-                "font-size": "0.7em",
-                "position": "fixed",
-                "top": "0",
-                "left": "5px",
-                "width": "80px",
-                "height": "20px",
-                "line-height": "1.5",
-                "opacity": "0.7",
-                "z-index": "5",
-                "display": ObjSaveCursors.options.buttonShow ? "block" : "none"
-            }).attr("id","buttonInGame"))
+            $openSelectCur.insertAfter(surv_config.containerMenu)
+            if(surv_config.game = 'suroi.io'){
+               $openSelectCur.css(surv_config.buttonStyleGame)
+               setZindex()
+            }
+
+            $(surv_config.containerGame).append($openSelectCur.clone(true).css(surv_config.buttonStyleGame).attr("id","buttonInGame"))
 
             $(".menu-block").css("max-height", "375px")
         }
@@ -1494,5 +1558,7 @@ function hex(r=0,g=0,b=0) {
         updatePanel(firststart)
         changeColor()
     }
-    init()
+    window.onload = function(){
+        init()
+    }
 })();
