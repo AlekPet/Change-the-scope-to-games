@@ -2,7 +2,7 @@
 // @name  Change the scope to suroi.io (surviv.io) and zombsroyale.io
 // @name:ru  Изменить прицел в suroi.io (surviv.io) и zombsroyale.io
 // @namespace    https://github.com/AlekPet/
-// @version      0.0.8.3.3
+// @version      0.0.8.3.4
 // @description  Сhange the scope in the game suroi.io (surviv.io), and zombsroyale.io
 // @description:ru  Изменяет прицел в игре suroi.io (surviv.io) и zombsroyale.io
 // @copyright    2018, AlekPet (https://github.com/AlekPet)
@@ -33,7 +33,7 @@ left: 50%;
 background: #dadada;
 max-width: 650px;
 width: 650px;
-z-index: 4;
+z-index: 50;
 border: 1px solid silver;
 box-shadow: 2px 2px 5px #847b7b;
 margin-left: -325px;
@@ -913,7 +913,7 @@ function hex(r=0,g=0,b=0) {
                 "height": "20px",
                 "line-height": "1.5",
                 "opacity": "0.7",
-                "z-index": "5",
+                "z-index": "50",
                 "padding:": "2px",
                 "text-decoration": "none",
                 "color":"white",
@@ -926,7 +926,7 @@ function hex(r=0,g=0,b=0) {
     }
 
     function setZindex(){
-        ["#splash-ui","#game-ui","#settings-menu"].forEach((selector, indx)=>{
+        ["#server-select-container","#skin-container","#left-joystick-container","#right-joystick-container","#top-left-container","#scopes-container","#action-container","#weapon-ammo-container","#adrenaline-bar-container","#health-bar-container","#killstreak-indicator-container","#spectating-buttons-container","#items-container","#healing-items-container","#ammo-container","#equipment-container","#weapons-container","#settings-tabs-container","#customize-tabs-container","#settings-menu","#game-ui","#splash-ui"].forEach((selector, indx)=>{
             $(selector).css("z-index", indx+2)
         })
     }
