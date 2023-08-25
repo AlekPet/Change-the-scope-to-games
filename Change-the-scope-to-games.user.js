@@ -2,7 +2,7 @@
 // @name  Change the scope to suroi.io (surviv.io) and zombsroyale.io
 // @name:ru  Изменить прицел в suroi.io (surviv.io) и zombsroyale.io
 // @namespace    https://github.com/AlekPet/
-// @version      0.0.8.3.5
+// @version      0.0.8.3.6
 // @description  Сhange the scope in the game suroi.io (surviv.io), and zombsroyale.io
 // @description:ru  Изменяет прицел в игре suroi.io (surviv.io) и zombsroyale.io
 // @copyright    2018, AlekPet (https://github.com/AlekPet)
@@ -259,7 +259,6 @@ width: 80%;
 margin: 5px;
 padding: 2px;
 border: 1px dotted #04fbc6;
-color: #000;
 }
 .maleCursor_form_body > .form_field{
 
@@ -358,6 +357,17 @@ font-size: 0.7em;
 }
 .font_6{
 font-size: 0.6em;
+}
+.rightPanel_options input[type=range]::-webkit-slider-thumb {
+    background: #f3f3f3;
+}
+.rightPanel_options input[type=range] {
+    background: #ff7500;
+    border: 1px solid black;
+    border-radius: 6px;
+}
+.makeCursor_form input {
+    color: black;
 }
 `);
 
