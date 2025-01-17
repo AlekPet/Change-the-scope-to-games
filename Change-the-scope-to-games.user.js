@@ -1,14 +1,15 @@
 // ==UserScript==
-// @name  Change the scope to suroi.io (surviv.io) and zombsroyale.io
-// @name:ru  Изменить прицел в suroi.io (surviv.io) и zombsroyale.io
+// @name  Change the scope to survev.io, surviv.io, suroi.io and zombsroyale.io
+// @name:ru  Изменить прицел в survev.io, surviv.io, suroi.io и zombsroyale.io
 // @namespace    https://github.com/AlekPet/
-// @version      0.0.8.3.6
-// @description  Сhange the scope in the game suroi.io (surviv.io), and zombsroyale.io
-// @description:ru  Изменяет прицел в игре suroi.io (surviv.io) и zombsroyale.io
+// @version      0.0.8.3.7
+// @description  Сhange the scope in the game survev.io, surviv.io, suroi.io and zombsroyale.io
+// @description:ru  Изменяет прицел в игре survev.io, surviv.io, suroi.io и zombsroyale.io
 // @copyright    2018, AlekPet (https://github.com/AlekPet)
 // @author       AlekPet
 // @license      MIT; https://opensource.org/licenses/MIT
 // @match        *://surviv.io/*
+// @match        *://survev.io/*
 // @match        *://surviv2.io/*
 // @match        *://suroi.io/*
 // @match        *://2dbattleroyale.com/*
@@ -521,85 +522,85 @@ font-size: 0.6em;
     if(debug) console.log("Язык:", language, selLang)
 
     // Functions
-function backdec(c) {
-  var rgbal = [],
-  dd = c,
-  fou = "";
+    function backdec(c) {
+        var rgbal = [],
+            dd = c,
+            fou = "";
 
-  if (dd.length == 7) {
-    for (var i = 0; i < 3; i++) {
-      var fl = [];
-      switch (i) {
-        case 0:
-          fou = dd.slice(1, 3);
-          break;
-        case 1:
-          fou = dd.slice(3, 5);
-          break;
-        case 2:
-          fou = dd.slice(5, 7);
-          break;
-      }
-      fou = fou.toLowerCase()
-      let ris = "";
-      for (var u = 0; u < 2; u++) {
-        var gi = fou.charAt(u)
-        if (gi.search(/[a-f]/ig) != -1) {
-          switch (gi) {
-            case "a":
-              ris = 10;
-              break;
-            case "b":
-              ris = 11;
-              break;
-            case "c":
-              ris = 12;
-              break;
-            case "d":
-              ris = 13;
-              break;
-            case "e":
-              ris = 14;
-              break;
-            case "f":
-              ris = 15;
-              break;
-          }
-        } else {
-          ris = gi
+        if (dd.length == 7) {
+            for (var i = 0; i < 3; i++) {
+                var fl = [];
+                switch (i) {
+                    case 0:
+                        fou = dd.slice(1, 3);
+                        break;
+                    case 1:
+                        fou = dd.slice(3, 5);
+                        break;
+                    case 2:
+                        fou = dd.slice(5, 7);
+                        break;
+                }
+                fou = fou.toLowerCase()
+                let ris = "";
+                for (var u = 0; u < 2; u++) {
+                    var gi = fou.charAt(u)
+                    if (gi.search(/[a-f]/ig) != -1) {
+                        switch (gi) {
+                            case "a":
+                                ris = 10;
+                                break;
+                            case "b":
+                                ris = 11;
+                                break;
+                            case "c":
+                                ris = 12;
+                                break;
+                            case "d":
+                                ris = 13;
+                                break;
+                            case "e":
+                                ris = 14;
+                                break;
+                            case "f":
+                                ris = 15;
+                                break;
+                        }
+                    } else {
+                        ris = gi
+                    }
+                    fl.push(ris)
+                }
+                let f = (fl[0] * Math.pow(16, 1)) + (fl[1] * Math.pow(16, 0))
+                rgbal.push(f)
+            }
         }
-        fl.push(ris)
-      }
-      let f = (fl[0] * Math.pow(16, 1)) + (fl[1] * Math.pow(16, 0))
-      rgbal.push(f)
+        return rgbal
     }
-  }
-  return rgbal
-}
 
-function hex(r=0,g=0,b=0) {
-  let gf = "",
-    hexv = "0123456789ABCDEF",
-    rc = (typeof r == "number" && r<256 && r>=0)?Number(r):0,
-    gc = (typeof g == "number" && g<256 && g>=0)?Number(g):0,
-    bc = (typeof b == "number" && b<256 && b>=0)?Number(b):0,
-    valhex = "",
-    ff = [rc, gc, bc];
-  for (var i = 0; i < 3; i++) {
-    let del = ff[i] % 16,
-      di = Math.floor(ff[i] / 16);
-    if (ff[i] >= 255) {
-      valhex += "FF";
-    } else if (ff[i] <= 0) {
-      valhex += "00";
-    } else {
-      valhex += hexv.charAt(di) + hexv.charAt(del);
+    function hex(r=0,g=0,b=0) {
+        let gf = "",
+            hexv = "0123456789ABCDEF",
+            rc = (typeof r == "number" && r<256 && r>=0)?Number(r):0,
+            gc = (typeof g == "number" && g<256 && g>=0)?Number(g):0,
+            bc = (typeof b == "number" && b<256 && b>=0)?Number(b):0,
+            valhex = "",
+            ff = [rc, gc, bc];
+        for (var i = 0; i < 3; i++) {
+            let del = ff[i] % 16,
+                di = Math.floor(ff[i] / 16);
+            if (ff[i] >= 255) {
+                valhex += "FF";
+            } else if (ff[i] <= 0) {
+                valhex += "00";
+            } else {
+                valhex += hexv.charAt(di) + hexv.charAt(del);
+            }
+        }
+        gf = "#" + valhex;
+
+        return gf;
     }
-  }
-  gf = "#" + valhex;
-
-  return gf;
-}
     // Functions end
 
     function loadStorage(){
@@ -798,7 +799,8 @@ function hex(r=0,g=0,b=0) {
         params.ctx.stroke();
 
         let surv_conf = detectSurviv()
-        if(current_game == 'surviv' && surv_conf.game=='suroi.io' && ticker_frame.work) {
+        if(current_game == 'surviv' && ticker_frame.work  && ['surviv.io', 'suroi.io', 'survev.io'].includes(surv_conf.game)) {
+
             ticker_frame(function(){
                 laserUpdate(params, color, widthLine, dotted)
             });
@@ -910,29 +912,49 @@ function hex(r=0,g=0,b=0) {
 
         let surviv_conf = default_surviv
 
-         if(location.host == 'suroi.io'){
-                Object.assign(surviv_conf, {
+        if(location.host == 'suroi.io'){
+            Object.assign(surviv_conf, {
                 containerGame: "#game-ui",
                 containerMenu:"#splash-ui",
                 game: "suroi.io",
                 canvas_game: 'canvas:not(#canvasChangeColor)',
                 buttonStyleGame: {
-                "font-size": "0.7em",
-                "position": "fixed",
-                "top": "0",
-                "left": "0",
-                "height": "20px",
-                "line-height": "1.5",
-                "opacity": "0.7",
-                "z-index": "50",
-                "padding:": "2px",
-                "text-decoration": "none",
-                "color":"white",
-                "margin-top": "0",
-                "cursor":"pointer",
-                "display": ObjSaveCursors.options.buttonShow ? "block" : "none"
-            }})
-            }
+                    "font-size": "0.7em",
+                    "position": "fixed",
+                    "top": "0",
+                    "left": "0",
+                    "height": "20px",
+                    "line-height": "1.5",
+                    "opacity": "0.7",
+                    "z-index": "50",
+                    "padding:": "2px",
+                    "text-decoration": "none",
+                    "color":"white",
+                    "margin-top": "0",
+                    "cursor":"pointer",
+                    "display": ObjSaveCursors.options.buttonShow ? "block" : "none"
+                }})
+        }
+
+        if(location.host == 'survev.io'){
+            Object.assign(surviv_conf, {
+                containerGame: "#game-area-wrapper",
+                containerMenu:".play-button-container",
+                game: "survev.io",
+                canvas_game: "#cvs",
+                buttonStyleGame: {
+                    "font-size": "0.7em",
+                    "position": "fixed",
+                    "top": "0",
+                    "left": "5px",
+                    "width": "100px",
+                    "height": "20px",
+                    "line-height": "1.5",
+                    "opacity": "0.7",
+                    "z-index": "5",
+                    "display": ObjSaveCursors.options.buttonShow ? "block" : "none"
+                }})
+        }
         return surviv_conf
     }
 
@@ -983,8 +1005,8 @@ function hex(r=0,g=0,b=0) {
             //$openSelectCur.insertAfter("#btn-start-mode-0")
             $openSelectCur.insertAfter(surv_config.containerMenu)
             if(surv_config.game = 'suroi.io'){
-               $openSelectCur.css(surv_config.buttonStyleGame)
-               setZindex()
+                $openSelectCur.css(surv_config.buttonStyleGame)
+                setZindex()
             }
 
             $(surv_config.containerGame).append($openSelectCur.clone(true).css(surv_config.buttonStyleGame).attr("id","buttonInGame"))
@@ -1438,7 +1460,7 @@ function hex(r=0,g=0,b=0) {
             b = parseInt(eli[2].value),
             a = 255
 
-            document.getElementById("colorInput").value = hex(r,g,b)
+        document.getElementById("colorInput").value = hex(r,g,b)
 
         for (var i = 0; i < imgData.data.length; i += 4) {
 
