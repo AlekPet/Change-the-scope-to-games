@@ -1,7 +1,12 @@
 # Change the scope to suroi.io (surviv.io) and zombsroyale.io games / Изменить прицел в играх suroi.io (surviv.io) и zombsroyale.io
 
+## Supporting me 💖
+
+If you enjoy my work, consider **[supporting me](https://alekpet.github.io/support)**. Your help means a lot and allows me to keep creating new and exciting projects. Thank you!
+
+
 ## Games support / Поддерживаемые игры
-> suroi.io (surviv.io)<br>
+> survev.io, suroi.io, surviv.io<br>
 > zombsroyale.io
 
 >Пользовательский скрипт, позволяющий изменить прицел в игре<br>
