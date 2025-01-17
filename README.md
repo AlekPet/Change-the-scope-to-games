@@ -1,4 +1,4 @@
-# Change the scope to suroi.io (surviv.io) and zombsroyale.io games / Изменить прицел в играх suroi.io (surviv.io) и zombsroyale.io
+# Change the scope to survev.io, surviv.io, suroi.io and zombsroyale.io games / Изменить прицел в играх suroi.io (surviv.io) и zombsroyale.io
 
 ## Supporting me 💖
 
